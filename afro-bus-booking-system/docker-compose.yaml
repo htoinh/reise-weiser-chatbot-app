@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+
+  mongo:
+    image: mongo:6
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    restart: always
+
+  bus-service:
+    build: ./bus-service
+    ports:
+      - "8081:8081"
+    restart: always
+    environment:
+      spring.data.mongodb.uri: mongodb://mongo:27017/busdb
+
+
+  passenger-service:
+   build: ./passenger-service
+   ports:
+    - "8082:8082"
+   restart: always
+   environment:
+     spring.data.mongodb.uri: mongodb://mongo:27017/passengerdb
+
+
+  booking-service:
+    build: ./booking-service
+    ports:
+      - "8083:8083"
+    restart: always
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://mongo:27017/bookingdb
+      PASSENGER_SERVICE_URL: "http://passenger-service:8082/passengers/"
+      BUS_SERVICE_URL: "http://bus-service:8081/buses/"
+
+    depends_on:
+      - mongo
+      - passenger-service
+      - bus-service
+
+
+
+volumes:
+  mongo-data:
