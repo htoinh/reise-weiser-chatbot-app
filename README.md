@@ -100,21 +100,24 @@ Inside each microservice directory run:
 
 --💻Git bash--
 
-mvn clean install
-mvn spring-boot:run
+`mvn clean install`
+
+`mvn spring-boot:run`
 
 ### 🚀 Run Docker
 Navigate into each service directory and run:
 
 --💻Git bash--
 
-docker build -t student-service
-docker build -t course-service
-docker build -t registration-service
+`docker build -t student-service`
+
+`docker build -t course-service`
+
+`docker build -t registration-service`
 
 Navigate into the root directory and run:
 
-docker-compose up --build
+`docker-compose up --build`
 
 ---
 
@@ -209,11 +212,13 @@ Inside each microservice directory, run:
 
 --💻Git bash--
 
-./gradlew clean build
-./gradlew bootRun
+`./gradlew clean build`
+
+`./gradlew bootRun`
 
 Navigate into the root directory and run:
+
 --💻Git bash--
 
-docker-compose up --build
+`docker-compose up --build`
 
