@@ -1,4 +1,4 @@
-# 🚀 Online Registration System (Microservices Architecture)
+# 🚀 Online Registration System
 
 A RESTful **Microservices-based Online Registration System** built with **Spring Boot**, designed to manage Students, Courses, and Registrations independently using **PostgreSQL** for persistence.
 
@@ -99,6 +99,7 @@ Handles **student-course registrations**, and references both `studentID` and `c
 Inside each microservice directory run:
 
 --💻Git bash--
+
 mvn clean install
 mvn spring-boot:run
 
@@ -106,6 +107,7 @@ mvn spring-boot:run
 Navigate into each service directory and run:
 
 --💻Git bash--
+
 docker build -t student-service
 docker build -t course-service
 docker build -t registration-service
@@ -116,7 +118,7 @@ docker-compose up --build
 
 ---
 
-# 🚌 Afro-Bus Booking System (Microservices Architecture)
+# 🚌 Afro-Bus Booking System 
 
 A distributed **Microservices-based Bus Booking System** built with **Spring Boot**, designed to handle Passenger registration, Bus availability, and Booking management using **MongoDB** for data persistence and **Docker** for containerized deployment.
 
@@ -206,10 +208,12 @@ Responsible for **Booking** buses for passengers.
 Inside each microservice directory, run:
 
 --💻Git bash--
+
 ./gradlew clean build
 ./gradlew bootRun
 
 Navigate into the root directory and run:
 --💻Git bash--
+
 docker-compose up --build
 
