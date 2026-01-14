@@ -1,0 +1,98 @@
+[
+  {
+    "busId": "MAT001",
+    "busType": "14-seater",
+    "departureTime": "13:10",
+    "arrivalTime": "21:00",
+    "busCapacity": 14,
+    "availableSeats": 4,
+    "tripStatus": "Scheduled",
+    "busNumber": "KCG 123A",
+    "busName": "Dice",
+    "busRoute": "Umoja"
+  },
+  {
+    "busId": "MAT002",
+    "busType": "Minibus",
+    "departureTime": "09:00",
+    "arrivalTime": "13:25",
+    "busCapacity": 25,
+    "availableSeats": 12,
+    "tripStatus": "Scheduled",
+    "busNumber": "KDD 456B",
+    "busName": "Mood",
+    "busRoute": "Eastleigh"
+  },
+  {
+    "busId": "MAT003",
+    "busType": "Matatu Van",
+    "departureTime": "12:15",
+    "arrivalTime": "14:20",
+    "busCapacity": 11,
+    "availableSeats": 0,
+    "tripStatus": "Departing",
+    "busNumber": "KBE 789C",
+    "busName": "Moneyfest",
+    "busRoute": "Pipeline"
+  },
+  {
+    "busId": "MAT004",
+    "busType": "Coach Bus",
+    "departureTime": "10:05",
+    "arrivalTime": "12:45",
+    "busCapacity": 40,
+    "availableSeats": 6,
+    "tripStatus": "Scheduled",
+    "busNumber": "KBX 321D",
+    "busName": "Detroit",
+    "busRoute": "Kasarani"
+  },
+  {
+    "busId": "MAT005",
+    "busType": "14-seater",
+    "departureTime": "02:10",
+    "arrivalTime": "04:00",
+    "busCapacity": 14,
+    "availableSeats": 14,
+    "tripStatus": "Delayed",
+    "busNumber": "KDD 634J",
+    "busName": "Moxy",
+    "busRoute": "Kayole"
+  },
+  {
+    "busId": "MAT006",
+    "busType": "14-seater",
+    "departureTime": "09:10",
+    "arrivalTime": "11:00",
+    "busCapacity": 14,
+    "availableSeats": 6,
+    "tripStatus": "Boarding",
+    "busNumber": "KCX 254A",
+    "busName": "Matrix",
+    "busRoute": "Kawangware"
+  },
+  {
+    "busId": "MAT007",
+    "busType": "Minibus",
+    "departureTime": "20:00",
+    "arrivalTime": "24:00",
+    "busCapacity": 14,
+    "availableSeats": 14,
+    "tripStatus": "Canceled",
+    "busNumber": "KDD 754A",
+    "busName": "Brawlout",
+    "busRoute": "Githurai 45"
+  },
+  {
+  "busId": "MAT008",
+  "busType": "Double-Decker Bus",
+  "departureTime": "10:00",
+  "arrivalTime": "15:00",
+  "busCapacity": 70,
+  "availableSeats": 14,
+  "tripStatus": "Scheduled",
+  "busNumber": "KDA 654E",
+  "busName": "Opposite",
+    "busRoute": "Rongai"
+}
+]

@@ -1,0 +1,102 @@
+[
+  {
+    "firstName": "James",
+    "lastName": "Odhiambo",
+    "email": "james.odhiambo@example.com",
+    "phoneNumber": "+254712345678",
+    "address": "Kisumu, Kenya",
+    "dateOfBirth": "1990-03-15",
+    "gender": "Male",
+    "passengerId": "P001"
+  },
+  {
+    "firstName": "Grace",
+    "lastName": "Wanjiku",
+    "email": "grace.wanjiku@example.com",
+    "phoneNumber": "+254722334455",
+    "address": "Nairobi, Kenya",
+    "dateOfBirth": "1985-06-22",
+    "gender": "Female",
+    "passengerId": "P002"
+  },
+  {
+    "firstName": "Brian",
+    "lastName": "Mwangi",
+    "email": "brian.mwangi@example.com",
+    "phoneNumber": "+254733556677",
+    "address": "Thika, Kenya",
+    "dateOfBirth": "1992-11-09",
+    "gender": "Male",
+    "passengerId": "P003"
+  },
+  {
+    "firstName": "Linda",
+    "lastName": "Njeri",
+    "email": "linda.njeri@example.com",
+    "phoneNumber": "+254700112233",
+    "address": "Nakuru, Kenya",
+    "dateOfBirth": "1998-01-30",
+    "gender": "Female",
+    "passengerId": "P004"
+  },
+  {
+    "firstName": "Samuel",
+    "lastName": "Kiptoo",
+    "email": "samuel.kiptoo@example.com",
+    "phoneNumber": "+254721998877",
+    "address": "Eldoret, Kenya",
+    "dateOfBirth": "1987-08-18",
+    "gender": "Male",
+    "passengerId": "P005"
+  },
+  {
+    "firstName": "Faith",
+    "lastName": "Achieng",
+    "email": "faith.achieng@example.com",
+    "phoneNumber": "+254723456789",
+    "address": "Kisii, Kenya",
+    "dateOfBirth": "1995-04-12",
+    "gender": "Female",
+    "passengerId": "P006"
+  },
+  {
+    "firstName": "Kevin",
+    "lastName": "Mutua",
+    "email": "kevin.mutua@example.com",
+    "phoneNumber": "+254734567890",
+    "address": "Machakos, Kenya",
+    "dateOfBirth": "1993-12-01",
+    "gender": "Male",
+    "passengerId": "P007"
+  },
+  {
+    "firstName": "Mercy",
+    "lastName": "Wambui",
+    "email": "mercy.wambui@example.com",
+    "phoneNumber": "+254735678901",
+    "address": "Nyeri, Kenya",
+    "dateOfBirth": "1991-07-25",
+    "gender": "Female",
+    "passengerId": "P008"
+  },
+  {
+    "firstName": "Elijah",
+    "lastName": "Omondi",
+    "email": "elijah.omondi@example.com",
+    "phoneNumber": "+254736789012",
+    "address": "Kakamega, Kenya",
+    "dateOfBirth": "1989-10-10",
+    "gender": "Male",
+    "passengerId": "P009"
+  },
+  {
+    "firstName": "Diana",
+    "lastName": "Chebet",
+    "email": "diana.chebet@example.com",
+    "phoneNumber": "+254737890123",
+    "address": "Kericho, Kenya",
+    "dateOfBirth": "1996-05-05",
+    "gender": "Female",
+    "passengerId": "P010"
+  }
+]
