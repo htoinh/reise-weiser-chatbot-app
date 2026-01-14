@@ -1,0 +1,22 @@
+spring:
+  profiles:
+    active: booking-service
+
+---
+spring:
+  config:
+    activate:
+      on-profile: booking-service
+
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: bookingdb
+
+  docker:
+    compose:
+      enabled: true
+
+server:
+  port: 8083
