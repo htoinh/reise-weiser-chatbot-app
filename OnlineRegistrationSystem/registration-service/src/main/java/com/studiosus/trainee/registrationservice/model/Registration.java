@@ -1,4 +1,4 @@
-package com.studiosus.trainee.registrationservice;
+package com.studiosus.trainee.registrationservice.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

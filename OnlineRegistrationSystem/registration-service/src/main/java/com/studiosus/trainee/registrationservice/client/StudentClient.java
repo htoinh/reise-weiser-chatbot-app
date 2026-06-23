@@ -1,5 +1,6 @@
-package com.studiosus.trainee.registrationservice;
+package com.studiosus.trainee.registrationservice.client;
 
+import com.studiosus.trainee.registrationservice.dto.StudentDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;

@@ -1,7 +1,8 @@
-package com.studiosus.trainee.courseservice;
+package com.studiosus.trainee.courseservice.repository;
 
 import java.util.List;
 
+import com.studiosus.trainee.courseservice.model.Course;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

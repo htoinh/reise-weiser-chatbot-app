@@ -1,5 +1,6 @@
-package com.studiosus.trainee.studentservice;
+package com.studiosus.trainee.studentservice.repository;
 
+import com.studiosus.trainee.studentservice.model.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

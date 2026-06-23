@@ -1,8 +1,10 @@
-package com.studiosus.trainee.studentservice;
+package com.studiosus.trainee.studentservice.service;
 
 import java.util.List;
 
 
+import com.studiosus.trainee.studentservice.model.Student;
+import com.studiosus.trainee.studentservice.repository.StudentRepository;
 import org.springframework.stereotype.Service;
 
 @Service

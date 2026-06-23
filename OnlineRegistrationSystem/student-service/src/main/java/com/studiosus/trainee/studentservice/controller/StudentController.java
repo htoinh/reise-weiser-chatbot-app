@@ -1,8 +1,10 @@
-package com.studiosus.trainee.studentservice;
+package com.studiosus.trainee.studentservice.controller;
 
 
 import java.util.List;
 
+import com.studiosus.trainee.studentservice.model.Student;
+import com.studiosus.trainee.studentservice.service.StudentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

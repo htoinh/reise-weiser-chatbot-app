@@ -1,7 +1,9 @@
-package com.studiosus.trainee.courseservice;
+package com.studiosus.trainee.courseservice.service;
 
 import java.util.List;
 
+import com.studiosus.trainee.courseservice.model.Course;
+import com.studiosus.trainee.courseservice.repository.CourseRepository;
 import org.springframework.stereotype.Service;
 
 @Service

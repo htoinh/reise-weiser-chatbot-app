@@ -1,7 +1,9 @@
-package com.studiosus.trainee.courseservice;
+package com.studiosus.trainee.courseservice.controller;
 
 import java.util.List;
 
+import com.studiosus.trainee.courseservice.model.Course;
+import com.studiosus.trainee.courseservice.service.CourseService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;

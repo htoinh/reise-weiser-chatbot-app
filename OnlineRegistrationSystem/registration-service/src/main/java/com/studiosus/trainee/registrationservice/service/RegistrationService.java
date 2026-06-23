@@ -1,8 +1,14 @@
-package com.studiosus.trainee.registrationservice;
+package com.studiosus.trainee.registrationservice.service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.studiosus.trainee.registrationservice.model.Registration;
+import com.studiosus.trainee.registrationservice.client.StudentClient;
+import com.studiosus.trainee.registrationservice.dto.RegistrationRequest;
+import com.studiosus.trainee.registrationservice.dto.RegistrationResponse;
+import com.studiosus.trainee.registrationservice.dto.StudentDTO;
+import com.studiosus.trainee.registrationservice.repository.RegistrationRepository;
 import org.springframework.stereotype.Service;
 
 

@@ -1,7 +1,11 @@
-package com.studiosus.trainee.registrationservice;
+package com.studiosus.trainee.registrationservice.controller;
 
 import java.util.List;
 
+import com.studiosus.trainee.registrationservice.model.Registration;
+import com.studiosus.trainee.registrationservice.dto.RegistrationRequest;
+import com.studiosus.trainee.registrationservice.dto.RegistrationResponse;
+import com.studiosus.trainee.registrationservice.service.RegistrationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;

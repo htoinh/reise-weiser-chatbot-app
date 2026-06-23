@@ -1,4 +1,4 @@
-package com.studiosus.trainee.registrationservice;
+package com.studiosus.trainee.registrationservice.dto;
 
 import lombok.Data;
 
