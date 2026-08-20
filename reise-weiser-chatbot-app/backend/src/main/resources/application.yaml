@@ -1,0 +1,3 @@
+spring:
+  application:
+    name: reise-weiser-chatbot-app

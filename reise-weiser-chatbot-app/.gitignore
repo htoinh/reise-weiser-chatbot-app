@@ -1,0 +1,78 @@
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+!**/.env.example
+*.jks
+*.p12
+*.pfx
+
+### Backend / Gradle ###
+backend/.gradle/
+backend/build/
+backend/bin/
+backend/out/
+*.class
+*.hprof
+hs_err_pid*
+replay_pid*
+
+### Frontend / Node.js ###
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/coverage/
+frontend/.vite/
+frontend/.eslintcache
+frontend/*.tsbuildinfo
+
+### Logs ###
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+### Spring Tool Suite ###
+.apt_generated/
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache/
+
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+nbproject/private/
+nbbuild/
+nbdist/
+.nb-gradle/
+
+### VS Code ###
+.vscode/*
+!.vscode/extensions.json
+
+### Local Docker data ###
+postgres-data/
+docker-data/
+
+### Temporary files ###
+tmp/
+*.tmp
+*.swp
+*.swo
+*~
+
+### Operating system files ###
+.DS_Store
+._*
+Thumbs.db
+Desktop.ini

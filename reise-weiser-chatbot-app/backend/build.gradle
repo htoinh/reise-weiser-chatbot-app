@@ -1,0 +1,90 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '4.0.6'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.wanekeya'
+version = '0.0.1-SNAPSHOT'
+description = 'reise-weiser-chatbot-app'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Exposes operational endpoints for health checks and metrics.
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    // Adds Spring Data JPA support for relational database access.
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    // Integrates Flyway database migrations with Spring Boot.
+    implementation 'org.springframework.boot:spring-boot-starter-flyway'
+    // Enables Bean Validation for request and model validation.
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    // Provides the Spring MVC stack for REST controllers and web APIs.
+    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+    // Adds PostgreSQL-specific Flyway migration support.
+    implementation 'org.flywaydb:flyway-database-postgresql'
+    // Aligns Spring AI dependency versions through a shared BOM.
+    implementation platform ('org.springframework.ai:spring-ai-bom:2.0.0')
+    // Provides Google GenAI embedding model integration for vector generation.
+    implementation 'org.springframework.ai:spring-ai-starter-model-google-genai-embedding'
+    // Connects Spring AI to the pgvector-backed PostgreSQL vector store.
+    implementation 'org.springframework.ai:spring-ai-starter-vector-store-pgvector'
+    // Parses and extracts data from HTML documents.
+    implementation 'org.jsoup:jsoup:1.23.1'
+    // Provides Google GenAI chat and generation model integration.
+    implementation 'org.springframework.ai:spring-ai-starter-model-google-genai'
+    // Generates and serves the OpenAPI/Swagger UI documentation.
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.1.0'
+    // Validates OAuth2 bearer tokens for secured API endpoints.
+    implementation  'org.springframework.boot:spring-boot-starter-security-oauth2-resource-server'
+
+    // Makes Lombok annotations available during compilation without packaging it.
+    compileOnly 'org.projectlombok:lombok'
+    // Adds Spring Boot developer hot reload and local development helpers.
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    // Starts linked Docker Compose services for local development.
+    developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
+    // Provides the PostgreSQL JDBC driver at runtime.
+    runtimeOnly 'org.postgresql:postgresql'
+    // Runs Lombok's annotation processor during main source compilation.
+    annotationProcessor 'org.projectlombok:lombok'
+    // Brings in the core Spring Boot testing stack.
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    // Adds test utilities for actuator endpoints and metrics.
+    testImplementation 'org.springframework.boot:spring-boot-starter-actuator-test'
+    // Adds JPA-focused test support such as sliced repository tests.
+    testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
+    // Adds Flyway helpers for migration-focused tests.
+    testImplementation 'org.springframework.boot:spring-boot-starter-flyway-test'
+    // Adds validation-specific assertions and test support.
+    testImplementation 'org.springframework.boot:spring-boot-starter-validation-test'
+    // Adds MockMvc and other Spring MVC testing utilities.
+    testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+    // Adds helpers for testing Spring Security behavior.
+    testImplementation 'org.springframework.boot:spring-boot-starter-security-test'
+    // Integrates Testcontainers support with Spring Boot tests.
+    testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+    // Enables JUnit Jupiter integration for generic Testcontainers usage.
+    testImplementation 'org.testcontainers:testcontainers-junit-jupiter'
+    // Provides disposable PostgreSQL containers for integration tests.
+    testImplementation 'org.testcontainers:testcontainers-postgresql'
+
+    // Makes Lombok annotations available to test sources during compilation.
+    testCompileOnly 'org.projectlombok:lombok'
+    // Supplies the JUnit Platform launcher needed by test execution tooling.
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    // Runs Lombok's annotation processor during test source compilation.
+    testAnnotationProcessor 'org.projectlombok:lombok'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
