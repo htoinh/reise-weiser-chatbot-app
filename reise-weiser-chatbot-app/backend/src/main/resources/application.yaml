@@ -1,3 +1,31 @@
 spring:
   application:
     name: reise-weiser-chatbot-app
+
+  ai:
+    model:
+      chat: none
+      embedding:
+        text:none
+
+  docker:
+    compose:
+      enabled: false
+
+  datasource:
+    url: ${POSTGRES_URL:jdbc:postgresql://localhost:5432/reiseweiser}
+    username: ${POSTGRES_USER:reiseweiser}
+    password: ${POSTGRES_PASSWORD:Yourmama1.}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
