@@ -15,7 +15,7 @@ spring:
   datasource:
     url: ${POSTGRES_URL:jdbc:postgresql://localhost:5432/reiseweiser}
     username: ${POSTGRES_USER:reiseweiser}
-    password: ${POSTGRES_PASSWORD:Yourmama1.}
+    password: ${POSTGRES_PASSWORD:-choose_a_local_pgadmin_password}
     driver-class-name: org.postgresql.Driver
 
   jpa:

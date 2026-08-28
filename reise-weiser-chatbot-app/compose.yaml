@@ -4,7 +4,7 @@ services:
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-reiseweiser}
       POSTGRES_USER: ${POSTGRES_USER:-reiseweiser}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-Yourmama1.}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-choose_a_local_pgadmin_password}
       POSTGRES_PORT: ${POSTGRES_PORT:-5432}
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
@@ -23,8 +23,8 @@ services:
   pgadmin:
     image: 'dpage/pgadmin4:latest'
     environment:
-        PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pauline.wanekeya@studiosus.com}
-        PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-Yourmama1.}
+        PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-admin@reiseweiser.com}
+        PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-choose_a_local_pgadmin_password}
     ports:
         - "${PGADMIN_PORT:-5050}:80"
     volumes:

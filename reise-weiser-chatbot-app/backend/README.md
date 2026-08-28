@@ -50,7 +50,7 @@ POSTGRES_PASSWORD=choose_a_local_database_password
 POSTGRES_PORT=5432
 POSTGRES_URL=jdbc:postgresql://localhost:5432/reiseweiser
 
-PGADMIN_EMAIL=admin@reiseweiser.local
+PGADMIN_EMAIL=admin@reiseweiser.com
 PGADMIN_PASSWORD=choose_a_local_pgadmin_password
 PGADMIN_PORT=5050
 ```
