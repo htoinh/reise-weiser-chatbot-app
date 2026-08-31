@@ -1,26 +1,21 @@
-# ReiseWeiser
+# 🧭 ReiseWeiser
 
-**ReiseWeiser** is a full-stack chatbot application for travel-related questions. It uses Google Gemini to generate answers and supports those answers with approved, publicly available sources connected with Studiosus and its associated companies.
+**ReiseWeiser** is a full-stack chatbot for travel-related questions. The planned application uses Google Gemini to generate answers supported by approved, publicly available travel sources.
 
-> **Status:** The project is currently under development. This README describes the intended final application.
+> 🚧 **Status:** ReiseWeiser is currently under development.
 
----
+## ✨ Planned features
 
-## Features
-
-- User registration and login
-- Secure password storage with BCrypt
-- JWT-based authentication with Spring Security
-- AI-generated answers using Google Gemini and Spring AI
-- Retrieval of relevant information from approved public sources
-- Clickable source links for traceable answers
-- Freshness-aware handling of prices, availability, dates and other changeable information
-- User-specific conversations and chat history
-- Responsive React interface
-- OpenAPI documentation with Swagger UI
-- PostgreSQL persistence and PGvector similarity search
-- Automated backend and frontend tests
-- Docker-based local deployment
+- 🔐 User registration and JWT authentication
+- 🤖 AI-generated answers using Google Gemini
+- 🔎 Retrieval from approved public sources
+- 🔗 Traceable source links
+- 💬 User-specific conversations and chat history
+- 📱 Responsive React interface
+- 📖 OpenAPI documentation with Swagger UI
+- 🐘 PostgreSQL persistence
+- 🧠 Semantic search with pgvector
+- 🐳 Docker-based local development
 
 ---
 
@@ -36,37 +31,64 @@ If no suitable source is available, the assistant informs the user instead of in
 
 ---
 
-## 🚀 Run Spring Boot Services (Without Docker)
+## 🏗️ Project structure
 
-Inside each microservice directory, run:
-
-**💻 Git bash**
-
-### Backend
-
-navigate to the backend folder via cd backend and run;
-
-```bash
-./gradlew clean build
+```text
+reise-weiser-chatbot-app/
+├── backend/           # Spring Boot API
+├── frontend/          # React application
+├── docs/              # Project documentation
+├── .env.example       # Environment-variable template
+├── compose.yaml       # PostgreSQL and pgAdmin
+└── README.md
 ```
 
-or
+## 🚀 Quick start
+
+### 1. Create the environment file
+
+Git Bash:
 
 ```bash
-./gradlew build
+cp .env.example .env
 ```
+
+Replace the example passwords in `.env` with local development values.
+
+### 2. Start the database
+
+Make sure Docker Desktop is running, then execute:
 
 ```bash
-./gradlew bootRun
+docker compose up -d
 ```
 
-### Frontend
+The services are available at:
 
-navigate to the frontend folder via cd frontend and run;
+| Service | Address |
+|---|---|
+| PostgreSQL | `localhost:5432` |
+| pgAdmin | `http://localhost:5050` |
+| Backend | `http://localhost:8080` |
+| Frontend | `http://localhost:5173` |
+
+### 3. Start the applications
+
+Follow the detailed instructions:
+
+- 🛠️ [Backend setup](backend/README.md)
+- 🎨 [Frontend setup](frontend/README.md)
+
+## 🛑 Stop the infrastructure
+
+Stop the containers while retaining the database data:
 
 ```bash
-./npm install
-./npm run dev
+docker compose down
 ```
 
+View their status at any time:
 
+```bash
+docker compose ps
+```

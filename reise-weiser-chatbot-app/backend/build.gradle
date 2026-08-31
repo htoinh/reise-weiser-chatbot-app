@@ -45,6 +45,8 @@ dependencies {
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.1.0'
     // Validates OAuth2 bearer tokens for secured API endpoints.
     implementation  'org.springframework.boot:spring-boot-starter-security-oauth2-resource-server'
+    //Provides flyway's migration engine
+    implementation "org.flywaydb:flyway-core"
 
     // Makes Lombok annotations available during compilation without packaging it.
     compileOnly 'org.projectlombok:lombok'
@@ -54,6 +56,10 @@ dependencies {
     developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
     // Provides the PostgreSQL JDBC driver at runtime.
     runtimeOnly 'org.postgresql:postgresql'
+    // Integrates Flyway database migrations with Spring Boot.
+    runtimeOnly "org.flywaydb:flyway-database-postgresql"
+    //Provides postgresql driver at runtime
+    runtimeOnly "org.postgresql:postgresql"
     // Runs Lombok's annotation processor during main source compilation.
     annotationProcessor 'org.projectlombok:lombok'
     // Brings in the core Spring Boot testing stack.

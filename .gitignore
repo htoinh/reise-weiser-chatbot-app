@@ -3,3 +3,8 @@
 /.ai/mcp/mcp.json
 /.idea/modules.xml
 /.idea/vcs.xml
+
+#Environment variables
+.env
+.env.*
+!.env.example
