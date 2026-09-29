@@ -79,16 +79,28 @@ Follow the detailed instructions:
 - 🛠️ [Backend setup](backend/README.md)
 - 🎨 [Frontend setup](frontend/README.md)
 
-## 🛑 Stop the infrastructure
+##  ⌨️ Useful commands
 
-Stop the containers while retaining the database data:
+Stop the containers while retaining the database data but delete the volumes:
 
 ```bash
 docker compose down
+```
+
+Stop the containers
+
+```bash
+docker compose stop
 ```
 
 View their status at any time:
 
 ```bash
 docker compose ps
+```
+
+Start the containers
+
+```bash
+docker compose start
 ```

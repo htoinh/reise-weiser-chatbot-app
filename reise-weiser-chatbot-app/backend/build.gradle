@@ -47,6 +47,8 @@ dependencies {
     implementation  'org.springframework.boot:spring-boot-starter-security-oauth2-resource-server'
     //Provides flyway's migration engine
     implementation "org.flywaydb:flyway-core"
+    //Provides Spring Security for authentication andd authorazation
+    implementation 'org.springframework.boot:spring-boot-starter-security'
 
     // Makes Lombok annotations available during compilation without packaging it.
     compileOnly 'org.projectlombok:lombok'
