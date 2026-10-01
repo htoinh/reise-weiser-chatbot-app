@@ -57,6 +57,7 @@ PGADMIN_PORT=5050
 
 The `.env` file is local and must not be committed.
 
+<a id="docker-compose"></a>
 ## 🐳 Start PostgreSQL and pgAdmin
 
 From the repository root:
@@ -108,6 +109,7 @@ Password: value of POSTGRES_PASSWORD
 
 The hostname is `database` because pgAdmin and PostgreSQL run in the same Docker network.
 
+<a id="run-the-backend"></a>
 ## ▶️ Run the backend
 
 ```bash
@@ -175,3 +177,31 @@ docker compose down
 This stops the containers but keeps their data.
 
 > ⚠️ `docker compose down -v` deletes the database volumes and all locally stored data.
+
+## 📮 Test with Postman
+Start the [backend](#run-the-backend) and [docker compose](#docker-compose) services in different terminals:
+
+Wait for the application startup confirmation and keep the terminals running.
+### Register a user
+Configure the request:
+- **Method:** POST
+- **URL:** `http://localhost:8080/api/auth/register`
+```json
+{
+ "email": "test@example.com",
+ "password": "TestPassword123!",
+ "name": "Test User"
+}
+```
+### Log in
+Configure the request:
+- **Method:** POST
+- **URL:** `http://localhost:8080/api/auth/login`
+```json
+{
+ "email": "test@example.com",
+ "password": "TestPassword123!"
+}
+```
+
+To check invalid credentials, resend the login request with an incorrect password. The required response is **401 Unauthorized**.

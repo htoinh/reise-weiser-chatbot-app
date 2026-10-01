@@ -1,10 +1,12 @@
 package com.studiosus.trainee.config;
 
 import com.studiosus.trainee.repository.UserRepository;
+import com.studiosus.trainee.security.JwtService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -43,6 +45,12 @@ public class SecurityConfigTest {
 
     @MockitoBean
     private AuthenticationConfig authenticationConfig;
+
+    @MockitoBean
+    private JwtService jwtService;
+
+    @MockitoBean
+    private AuthenticationProvider authenticationProvider;
 
     @Test
     void publicAuthEndpoints_shouldNotBlockBySecurity() throws Exception {
