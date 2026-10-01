@@ -1,12 +1,15 @@
 spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.ai.model.google.genai.autoconfigure.embedding.GoogleGenAiEmbeddingConnectionAutoConfiguration
+      - org.springframework.ai.vectorstore.pgvector.autoconfigure.PgVectorStoreAutoConfiguration
   application:
     name: reise-weiser-chatbot-app
-
   ai:
     model:
       chat: none
       embedding:
-        text:none
+        text: none
 
   docker:
     compose:

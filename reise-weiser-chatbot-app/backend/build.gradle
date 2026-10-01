@@ -49,6 +49,7 @@ dependencies {
     implementation "org.flywaydb:flyway-core"
     //Provides Spring Security for authentication andd authorazation
     implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.5'
 
     // Makes Lombok annotations available during compilation without packaging it.
     compileOnly 'org.projectlombok:lombok'
@@ -62,6 +63,9 @@ dependencies {
     runtimeOnly "org.flywaydb:flyway-database-postgresql"
     //Provides postgresql driver at runtime
     runtimeOnly "org.postgresql:postgresql"
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
+    runtimeOnly "io.jsonwebtoken:jjwt-jackson:0.12.5"
+
     // Runs Lombok's annotation processor during main source compilation.
     annotationProcessor 'org.projectlombok:lombok'
     // Brings in the core Spring Boot testing stack.
