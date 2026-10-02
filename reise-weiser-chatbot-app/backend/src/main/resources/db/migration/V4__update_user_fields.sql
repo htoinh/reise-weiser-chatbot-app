@@ -1,0 +1,2 @@
+ALTER TABLE users RENAME username TO email;
+ALTER TABLE users ADD COLUMN name VARCHAR(150);
