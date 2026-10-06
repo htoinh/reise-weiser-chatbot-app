@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '4.0.6'
     id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.openapi.generator' version '7.4.0'
 }
 
 group = 'com.wanekeya'
@@ -47,9 +48,10 @@ dependencies {
     implementation  'org.springframework.boot:spring-boot-starter-security-oauth2-resource-server'
     //Provides flyway's migration engine
     implementation "org.flywaydb:flyway-core"
-    //Provides Spring Security for authentication andd authorazation
+    //Provides Spring Security for authentication and authorization
     implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'io.jsonwebtoken:jjwt-api:0.12.5'
+    implementation 'io.jsonwebtoken:jjwt:0.12.5'
+    //implementation 'io.swagger.core.v3:swagger-annotations:3.0.'
 
     // Makes Lombok annotations available during compilation without packaging it.
     compileOnly 'org.projectlombok:lombok'
@@ -63,9 +65,8 @@ dependencies {
     runtimeOnly "org.flywaydb:flyway-database-postgresql"
     //Provides postgresql driver at runtime
     runtimeOnly "org.postgresql:postgresql"
-    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
-    runtimeOnly "io.jsonwebtoken:jjwt-jackson:0.12.5"
-
+    runtimeOnly 'io.jsonwebtoken:jjwt:0.12.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.5'
     // Runs Lombok's annotation processor during main source compilation.
     annotationProcessor 'org.projectlombok:lombok'
     // Brings in the core Spring Boot testing stack.
@@ -100,3 +101,28 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+openApiGenerate {
+    generatorName = 'spring'
+    inputSpec = "$projectDir/src/main/resources/openapi/reise-weiser.yaml"
+    outputDir = "$buildDir/generated"
+    apiPackage = "com.studiosus.trainee.apis"
+    modelPackage = "com.studiosus.trainee.dtos"
+
+    configOptions = [
+            useTags: 'true',
+            interfaceOnly : 'true',
+            useSpringBoot3 : 'true',
+            openApiNullable : 'false'
+    ]
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs += "$buildDir/generated/src/main/java"
+        }
+    }
+}
+
+compileJava.dependsOn tasks.openApiGenerate

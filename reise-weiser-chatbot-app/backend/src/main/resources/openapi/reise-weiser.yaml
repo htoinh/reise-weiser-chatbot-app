@@ -1,0 +1,43 @@
+openapi: 3.0.3
+info:
+  title: ReiseWeiser Chatbot API
+  version: 0.0.1
+  description: API Documentation for the ReiseWeiser Travel Chatbot.
+
+servers:
+  - url: http://localhost:8080
+
+paths:
+  /register:
+    $ref: './paths/auth-register.yaml'
+  /login:
+    $ref: './paths/auth-login.yaml'
+  /chat-send:
+    $ref: './paths/chat-send.yaml'
+  /chat-history:
+    $ref: './paths/chat-history.yaml'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    RegisterRequest:
+      $ref: './requests/auth.yaml#/RegisterRequest'
+    LoginRequest:
+      $ref: './requests/auth.yaml#/LoginRequest'
+    ChatRequest:
+      $ref: './requests/chat.yaml#/ChatMessageRequest'
+    ChatResponse:
+      $ref: './responses/chat.yaml#/ChatMessageResponse'
+    Error:
+      $ref: './responses/error.yaml#/Error'
+
+security:
+  - bearerAuth: []
+
+
+
+

@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = SecurityConfigTest.EmptyController.class)
-@Import(SecurityConfig.class)
+@Import ({SecurityConfig.class, AuthenticationConfig.class})
 public class SecurityConfigTest {
 
     @Controller
@@ -42,9 +42,6 @@ public class SecurityConfigTest {
 
     @MockitoBean
     private UserDetailsService userDetailsService;
-
-    @MockitoBean
-    private AuthenticationConfig authenticationConfig;
 
     @MockitoBean
     private JwtService jwtService;

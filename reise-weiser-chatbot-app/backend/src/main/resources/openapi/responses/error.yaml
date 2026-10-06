@@ -1,0 +1,31 @@
+Error:
+  type: object
+  required:
+    - status
+    - message
+  properties:
+    status:
+      type: integer
+    message:
+      type: string
+
+Unauthorized:
+  description: Invalid credentials
+  content:
+    application/json:
+      schema:
+        $ref: '#/Error'
+
+InternalServerError:
+  description: Internal server error
+  content:
+    application/json:
+      schema:
+        $ref: '#/Error'
+
+BadRequest:
+  description: Bad request
+  content:
+    application/json:
+      schema:
+        $ref: '#/Error'

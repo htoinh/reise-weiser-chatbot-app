@@ -1,0 +1,36 @@
+ChatMessageResponse:
+  type: object
+  required:
+    - content
+  properties:
+    messageId:
+      type: integer
+      format: int64
+      example: 101
+    conversationId:
+      type: integer
+      format: int64
+      example: 1
+    content:
+      type: string
+      example: "The most visited destinations are Budva beaches and Kotor old town."
+
+ChatHistoryResponse:
+  type: array
+  items:
+    type: object
+    required:
+      - conversationId
+      - title
+      - updatedAt
+    properties:
+      conversationId:
+        type: integer
+        format: int64
+        example: 1
+      title:
+        type: string
+        example: "Montenegro Trip planning"
+      updatedAt:
+        type: string
+        format: date-time

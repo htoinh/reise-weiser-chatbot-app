@@ -1,0 +1,12 @@
+ChatMessageRequest:
+  type: object
+  required:
+    - promptMessage
+  properties:
+    conversationId:
+      type: integer
+      format: int64
+      description: Include to continue a conversation.
+    promptMessage:
+      type: string
+      example: "What destinations are visited in Montenegro?"

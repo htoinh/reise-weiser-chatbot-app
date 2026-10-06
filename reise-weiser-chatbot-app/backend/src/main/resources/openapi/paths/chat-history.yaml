@@ -1,0 +1,29 @@
+get:
+  tags:
+    - Chat
+  summary: Get chat history
+  responses:
+    '200':
+      description: Chat history retrieved
+      content:
+        application/json:
+          schema:
+            $ref: '../responses/chat.yaml#/ChatHistoryResponse'
+    '401':
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '../responses/error.yaml#/Unauthorized'
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '../responses/error.yaml#/InternalServerError'
+    '400':
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '../responses/error.yaml#/BadRequest'

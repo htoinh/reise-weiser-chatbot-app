@@ -1,0 +1,7 @@
+AuthResponse:
+  type: object
+  required:
+    - token
+  properties:
+    token:
+      type: string
