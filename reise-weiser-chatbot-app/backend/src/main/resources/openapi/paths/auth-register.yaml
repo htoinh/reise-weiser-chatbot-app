@@ -1,0 +1,38 @@
+post:
+  tags:
+    - Authentication
+  operationId: registerUser
+  summary: Register a new user
+  security: []
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../requests/auth.yaml#/RegisterRequest'
+  responses:
+    '200':
+      description: User registration successful
+      content:
+        application/json:
+          schema:
+            $ref: '../responses/auth.yaml#/AuthResponse'
+    '400':
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '../responses/error.yaml#/BadRequest'
+    '401':
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '../responses/error.yaml#/Unauthorized'
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '../responses/error.yaml#/InternalServerError'
+

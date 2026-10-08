@@ -1,3 +1,4 @@
+/*
 package com.studiosus.trainee.dto;
 
 public class AuthDtos {
@@ -7,3 +8,4 @@ public class AuthDtos {
 
     public record AuthResponse(String token) {}
 }
+*/

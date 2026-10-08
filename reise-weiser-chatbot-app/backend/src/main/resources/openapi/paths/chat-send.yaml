@@ -1,0 +1,36 @@
+post:
+  tags:
+    - Chat
+  operationId: chatSend
+  summary: Send a chat prompt
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../requests/chat.yaml#/ChatMessageRequest'
+  responses:
+    '200':
+      description: AI response generated
+      content:
+        application/json:
+          schema:
+            $ref: '../responses/chat.yaml#/ChatMessageResponse'
+    '401':
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+           $ref: '../responses/error.yaml#/Unauthorized'
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '../responses/error.yaml#/InternalServerError'
+    '400':
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '../responses/error.yaml#/BadRequest'

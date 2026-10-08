@@ -171,14 +171,14 @@ Clean generated build files:
 From the repository root:
 
 ```bash
-docker compose down
+docker compose stop
 ```
 
 This stops the containers but keeps their data.
 
 > ⚠️ `docker compose down -v` deletes the database volumes and all locally stored data.
 
-## 📮 Test with Postman
+## 📮 Test with Postman 
 Start the [backend](#run-the-backend) and [docker compose](#docker-compose) services in different terminals:
 
 Wait for the application startup confirmation and keep the terminals running.
@@ -205,3 +205,10 @@ Configure the request:
 ```
 
 To check invalid credentials, resend the login request with an incorrect password. The required response is **401 Unauthorized**.
+
+## Test with Swagger UI
+1. [Start the backend](#run-the-backend) with PostgreSQL running.
+2. Open http://localhost:8080/swagger-ui.html.
+3. Expand `POST /api/auth/register`, click **Try it out**, enter a name, email and password, then click **Execute**. Use an email that is not already registered.
+4. Test `POST /api/auth/login` with the same email and password.
+5. Check that both requests return **200 OK** and a JWT token.

@@ -1,31 +1,31 @@
 package com.studiosus.trainee.controller;
 
-import com.studiosus.trainee.dto.AuthDtos.AuthResponse;
-import com.studiosus.trainee.dto.AuthDtos.RegisterRequest;
-import com.studiosus.trainee.dto.AuthDtos.LoginRequest;
+
+import com.studiosus.trainee.apis.AuthenticationApi;
+import com.studiosus.trainee.dtos.AuthResponse;
+import com.studiosus.trainee.dtos.LoginRequest;
+import com.studiosus.trainee.dtos.RegisterRequest;
 import com.studiosus.trainee.service.AuthService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/auth")
 @RequiredArgsConstructor
-public class AuthController {
+public class AuthController implements AuthenticationApi {
 
     private final AuthService authService;
 
-    @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
-        return ResponseEntity.ok(authService.register(request));
+    @Override
+    public ResponseEntity<AuthResponse> registerUser(@Valid @RequestBody RegisterRequest registerRequest) {
+        return ResponseEntity.ok(authService.register(registerRequest));
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
-        return ResponseEntity.ok(authService.login(request));
+    @Override
+    public ResponseEntity<AuthResponse> loginUser(@Valid @RequestBody LoginRequest loginRequest) {
+        return ResponseEntity.ok(authService.login(loginRequest));
 
     }
 

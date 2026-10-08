@@ -1,6 +1,8 @@
 package com.studiosus.trainee.service;
 
-import com.studiosus.trainee.dto.AuthDtos;
+import com.studiosus.trainee.dtos.AuthResponse;
+import com.studiosus.trainee.dtos.LoginRequest;
+import com.studiosus.trainee.dtos.RegisterRequest;
 import com.studiosus.trainee.model.User;
 import com.studiosus.trainee.repository.UserRepository;
 import com.studiosus.trainee.security.JwtService;
@@ -19,16 +21,16 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
 
-    public AuthDtos.AuthResponse register(AuthDtos.RegisterRequest registerRequest) {
-        var user = User.builder().email(registerRequest.email()).passwordHash(passwordEncoder.encode(registerRequest.password())).name(registerRequest.name()).build();
+    public AuthResponse register(RegisterRequest registerRequest) {
+        var user = User.builder().email(registerRequest.getEmail()).passwordHash(passwordEncoder.encode(registerRequest.getPassword())).name(registerRequest.getName()).build();
         userRepository.save(user);
-        return new AuthDtos.AuthResponse(jwtService.generateToken(user.getEmail()));
+        return new AuthResponse(jwtService.generateToken(user.getEmail()));
 
     }
 
-    public AuthDtos.AuthResponse login(AuthDtos.LoginRequest loginRequest) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.email(), loginRequest.password()));
-        return new AuthDtos.AuthResponse(jwtService.generateToken(loginRequest.email()));
+    public AuthResponse login(LoginRequest loginRequest) {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+        return new AuthResponse(jwtService.generateToken(loginRequest.getEmail()));
     }
 
 }
