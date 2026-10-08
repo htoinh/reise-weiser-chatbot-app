@@ -13,7 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
                 "org.springframework.ai.model.google.genai.autoconfigure.embedding.GoogleGenAiTextEmbeddingAutoConfiguration," +
                 "org.springframework.ai.vectorstore.pgvector.autoconfigure.PgVectorStoreAutoConfiguration"
 })
-class ReiseWeiserChatbotAppApplicationTests {
+class ReiseWeiserChatbotApplicationTests {
 
     @Test
     void contextLoads() {

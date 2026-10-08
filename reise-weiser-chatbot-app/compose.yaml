@@ -2,19 +2,19 @@ services:
   database:
     image: 'postgres:17'
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-reiseweiser}
-      POSTGRES_USER: ${POSTGRES_USER:-reiseweiser}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-choose_a_local_pgadmin_password}
-      POSTGRES_PORT: ${POSTGRES_PORT:-5432}
+      POSTGRES_DB: ${POSTGRES_DB:?POSTGRES_DB is required}
+      POSTGRES_USER: ${POSTGRES_USER:?POSTGRES_USER is required}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+      POSTGRES_PORT: ${POSTGRES_PORT:?POSTGRES_PORT is required}
     ports:
-      - "${POSTGRES_PORT:-5432}:5432"
+      - "${POSTGRES_PORT:?POSTGRES_PORT is required}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
       test:
         [
           "CMD-SHELL",
-          "pg_isready -U ${POSTGRES_USER:-reiseweiser} -d ${POSTGRES_DB:-reiseweiser}"
+          "pg_isready -U ${POSTGRES_USER:?POSTGRES_USER is required} -d ${POSTGRES_DB:?POSTGRES_DB is required}"
         ]
       interval: 5s
       timeout: 5s
@@ -23,10 +23,10 @@ services:
   pgadmin:
     image: 'dpage/pgadmin4:latest'
     environment:
-        PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-admin@reiseweiser.com}
-        PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-choose_a_local_pgadmin_password}
+        PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:?PGADMIN_DEFAULT_EMAIL is required}
+        PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:?PGADMIN_DEFAULT_PASSWORD is required}
     ports:
-        - "${PGADMIN_PORT:-5050}:80"
+        - "${PGADMIN_PORT:?PGADMIN_PORT is required}:80"
     volumes:
         - pgadmin_data:/var/lib/pgadmin
     depends_on:

@@ -1,24 +1,26 @@
 spring:
+  config:
+    import: "optional:file:${PWD}/.env,optional:file:../.env,optional:file:.env[.properties]"
   autoconfigure:
     exclude:
       - org.springframework.ai.model.google.genai.autoconfigure.embedding.GoogleGenAiEmbeddingConnectionAutoConfiguration
+      - org.springframework.ai.model.google.genai.autoconfigure.embedding.GoogleGenAiTextEmbeddingAutoConfiguration
       - org.springframework.ai.vectorstore.pgvector.autoconfigure.PgVectorStoreAutoConfiguration
   application:
     name: reise-weiser-chatbot-app
   ai:
-    model:
-      chat: none
-      embedding:
-        text: none
+    google:
+      genai:
+        api-key: ${GEMINI_API_KEY}
 
   docker:
     compose:
       enabled: false
 
   datasource:
-    url: ${POSTGRES_URL:jdbc:postgresql://localhost:5432/reiseweiser}
-    username: ${POSTGRES_USER:reiseweiser}
-    password: ${POSTGRES_PASSWORD:root}
+    url: ${POSTGRES_URL}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   jpa:
