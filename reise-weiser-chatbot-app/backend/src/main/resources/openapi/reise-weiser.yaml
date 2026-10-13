@@ -12,10 +12,13 @@ paths:
     $ref: './paths/auth-register.yaml'
   /login:
     $ref: './paths/auth-login.yaml'
-  /chat-send:
-    $ref: './paths/chat-send.yaml'
+#  /chat-send:
+#    $ref: './paths/chat-send.yaml'
   /chat-history:
     $ref: './paths/chat-history.yaml'
+  /chatbot/message:
+    $ref: './paths/chat-send.yaml'
+
 
 components:
   securitySchemes:
