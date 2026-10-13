@@ -1,0 +1,25 @@
+package com.studiosus.trainee.controller;
+
+import com.studiosus.trainee.apis.ChatApi;
+import com.studiosus.trainee.dtos.ChatMessageRequest;
+import com.studiosus.trainee.dtos.ChatMessageResponse;
+import com.studiosus.trainee.service.ChatbotService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
+
+@Slf4j
+@RestController
+@RequiredArgsConstructor
+public class ChatbotController implements ChatApi {
+
+    private final ChatbotService chatbotService;
+
+    @Override
+    public ResponseEntity<ChatMessageResponse> chatSend(ChatMessageRequest request) {
+
+        log.info("Received chatbot request to process prompt for conversationId: {}", request.getConversationId());
+        return ResponseEntity.ok(chatbotService.processMessage(request));
+    }
+}
