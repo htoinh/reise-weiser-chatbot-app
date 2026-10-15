@@ -1,0 +1,12 @@
+ConversationResponse:
+  type: object
+  required:
+    - conversationId
+    - title
+  properties:
+    conversationId:
+      type: integer
+      format: int64
+    title:
+      type: string
+      example: "Montenegro Trip planning"

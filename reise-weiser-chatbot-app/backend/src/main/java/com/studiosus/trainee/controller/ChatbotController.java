@@ -4,9 +4,11 @@ import com.studiosus.trainee.apis.ChatApi;
 import com.studiosus.trainee.dtos.ChatHistoryResponseInner;
 import com.studiosus.trainee.dtos.ChatMessageRequest;
 import com.studiosus.trainee.dtos.ChatMessageResponse;
+import com.studiosus.trainee.dtos.ConversationResponse;
 import com.studiosus.trainee.service.ChatbotService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,5 +31,10 @@ public class ChatbotController implements ChatApi {
     @Override
     public ResponseEntity<List<ChatHistoryResponseInner>> chatHistoryGet(){
         return ResponseEntity.ok(chatbotService.getChatHistory());
+    }
+
+    @Override
+    public ResponseEntity<ConversationResponse> createConversation(){
+        return ResponseEntity.status(HttpStatus.CREATED).body(chatbotService.createConversation());
     }
 }

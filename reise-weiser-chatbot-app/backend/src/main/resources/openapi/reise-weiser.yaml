@@ -12,12 +12,13 @@ paths:
     $ref: './paths/auth-register.yaml'
   /login:
     $ref: './paths/auth-login.yaml'
-#  /chat-send:
-#    $ref: './paths/chat-send.yaml'
   /chat-history:
     $ref: './paths/chat-history.yaml'
   /chatbot/message:
     $ref: './paths/chat-send.yaml'
+  /chatbot/conversation:
+    $ref: './paths/conversation-create.yaml'
+
 
 
 components:
@@ -35,6 +36,8 @@ components:
       $ref: './requests/chat.yaml#/ChatMessageRequest'
     ChatResponse:
       $ref: './responses/chat.yaml#/ChatMessageResponse'
+    ConversationResponse:
+      $ref: './responses/conversation.yaml#/ConversationResponse'
     Error:
       $ref: './responses/error.yaml#/Error'
 
