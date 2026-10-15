@@ -1,0 +1,15 @@
+get:
+  tags: [Chat]
+  operationId: getChatHistory
+  summary: Get the logged in user's chat history
+  security:
+    - bearerAuth: []
+  responses:
+    '200':
+      description: Previous chat history retrieved
+      content:
+        application/json:
+          schema:
+            $ref: '../responses/chat.yaml#/ChatHistoryResponse'
+    '401':
+      description: Unauthorized
