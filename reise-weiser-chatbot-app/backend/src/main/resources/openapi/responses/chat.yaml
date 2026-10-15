@@ -20,9 +20,11 @@ ChatHistoryResponse:
   items:
     type: object
     required:
+      - messageId
       - conversationId
       - title
-      - updatedAt
+      - createdAt
+      - aiResponse
     properties:
       conversationId:
         type: integer
@@ -31,6 +33,13 @@ ChatHistoryResponse:
       title:
         type: string
         example: "Montenegro Trip planning"
-      updatedAt:
+      createdAt:
         type: string
         format: date-time
+      userPrompt:
+        type: string
+      aiResponse:
+        type: string
+      messageId:
+        type: integer
+        format: int64

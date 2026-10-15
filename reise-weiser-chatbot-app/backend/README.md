@@ -13,9 +13,9 @@ The ReiseWeiser backend provides the REST API, database persistence, authenticat
 - 🛫 Flyway
 - 🐘 pgAdmin
 - 🐳 Docker Compose
-- 🔐 Spring Security and JWT — planned
-- 🤖 Spring AI and Google Gemini — planned
-- 📖 OpenAPI and Swagger UI — planned
+- 🔐 Spring Security and JWT
+- 🤖 Spring AI and Google Gemini 
+- 📖 OpenAPI and Swagger UI 
 
 ## ✅ Prerequisites
 
@@ -53,6 +53,9 @@ POSTGRES_URL=jdbc:postgresql://localhost:5432/reiseweiser
 PGADMIN_EMAIL=admin@reiseweiser.com
 PGADMIN_PASSWORD=choose_a_local_pgadmin_password
 PGADMIN_PORT=5050
+
+GEMINI_API_KEY=your_google_ai_studio_api_key
+GEMINI_MODEL=gemini-3.8-flash
 ```
 
 The `.env` file is local and must not be committed.
@@ -111,8 +114,19 @@ The hostname is `database` because pgAdmin and PostgreSQL run in the same Docker
 
 <a id="run-the-backend"></a>
 ## ▶️ Run the backend
-
+### IntelliJ IDEA
+1. Start PostgreSQL and pgAdmin using [Docker Compose](#docker-compose).
+2. Open **Run → Edit Configurations**.
+3. Select `ReiseWeiserChatbotApplication`.
+4. Add the values from `.env` under **Environment variables**.
+5. Apply the changes and run the application.
+### Git Bash
+From the repository root:
 ```bash
+docker compose up -d
+set -a
+source .env
+set +a
 cd backend
 ./gradlew bootRun
 ```
@@ -139,6 +153,7 @@ src/main/resources/db/migration/
 | `conversations` | Chat conversations owned by users |
 | `messages` | User and assistant messages |
 | `flyway_schema_history` | Applied database-migration history |
+| `chat_message` | Stored prompts, AI answers, conversation IDs and creation timestamps |
 
 ## 🧹 Useful Gradle commands
 
@@ -165,7 +180,10 @@ Clean generated build files:
 ```bash
 ./gradlew clean
 ```
-
+Generate API interfaces and DTOs from the OpenAPI specification:
+```bash
+./gradlew openApiGenerate
+```
 ## 🛑 Stop the services
 
 From the repository root:
@@ -206,9 +224,35 @@ Configure the request:
 
 To check invalid credentials, resend the login request with an incorrect password. The required response is **401 Unauthorized**.
 
-## Test with Swagger UI
+## 🧪 Test with Swagger UI
+
 1. [Start the backend](#run-the-backend) with PostgreSQL running.
+
 2. Open http://localhost:8080/swagger-ui.html.
-3. Expand `POST /api/auth/register`, click **Try it out**, enter a name, email and password, then click **Execute**. Use an email that is not already registered.
-4. Test `POST /api/auth/login` with the same email and password.
-5. Check that both requests return **200 OK** and a JWT token.
+
+3. Execute `POST /register` with a new email, password and name.
+
+4. Execute `POST /login` using the registered email and password.
+
+5. Copy the returned JWT. Click **Authorize**, paste the token without
+
+   the `Bearer ` prefix, and authorize.
+
+### Create a conversation
+
+Execute `POST /conversations`. No request body is required.
+
+### Send a message
+
+Execute `POST /chatbot/message` using the returned conversation ID:
+
+```json
+{
+  "conversationId": 1,
+  "promptMessage": "Suggest three places to visit in Berlin."
+}
+```
+
+### Retrieve chat history
+
+Execute `GET /chat-history`. No request body is required.
