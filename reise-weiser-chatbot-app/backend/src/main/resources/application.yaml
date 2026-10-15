@@ -12,6 +12,8 @@ spring:
     google:
       genai:
         api-key: ${GEMINI_API_KEY}
+        chat:
+          model: ${GEMINI_MODEL}
 
   docker:
     compose:
