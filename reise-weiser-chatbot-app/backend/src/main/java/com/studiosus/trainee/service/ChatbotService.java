@@ -1,5 +1,6 @@
 package com.studiosus.trainee.service;
 
+import com.google.genai.errors.ApiException;
 import com.studiosus.trainee.entity.Conversation;
 import com.studiosus.trainee.dtos.ChatHistoryResponseInner;
 import com.studiosus.trainee.dtos.ChatMessageRequest;
@@ -19,10 +20,11 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 @Slf4j
 @Service
@@ -57,6 +59,10 @@ public class ChatbotService {
         try {
             log.info("Attempting to connect to Google Gemini AI...");
             var aiResponse = CompletableFuture.supplyAsync(() -> chatClient.prompt()
+                            .system("""
+                                    Reply in plain text only as a single paragraph without Markdown, asterisks (*), bullet points, or line breaks.
+                                    Keep your answer strictly under 95 words.
+                                    """)
                             .user(request.getPromptMessage())
                             .call()
                             .content())
@@ -98,7 +104,7 @@ public class ChatbotService {
 
             ChatMessageResponse responseDto = new ChatMessageResponse();
             responseDto.setConversationId(request.getConversationId());
-            responseDto.setContent(Optional.ofNullable(aiResponse).orElse("I am unable to provide a response at this time."));
+            responseDto.setContent(formatContent(aiResponse));
 
             log.info("Returning mapped response to client: {}", responseDto);
             ChatMessage message = ChatMessage.builder()
@@ -113,19 +119,36 @@ public class ChatbotService {
             log.info("Returning mapped response to client: {}", responseDto);
             return responseDto;
 
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            log.error("AI request was interrupted", e);
+            throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "AI service request was interrupted", e);
+        } catch (TimeoutException e) {
+            log.error("Timed out waiting for Google Gemini AI response", e);
+            throw new ResponseStatusException(HttpStatus.GATEWAY_TIMEOUT, "AI service connection timed out", e);
         } catch (Exception e) {
-            log.error("Failed to connect to Google Gemini AI or request timed out. Reason: {}", e.getMessage(), e);
+            log.error("Failed to connect to Google Gemini AI. Reason: {}", e.getMessage(), e);
 
-            // Traverse the exception chain to find if any underlying cause is a 429 Quota Exceeded error
-            Throwable cause = e;
-            while (cause != null) {
-                if (cause.getMessage() != null && cause.getMessage().contains("429")) {
-                    throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS, "AI service quota exceeded. Please check your API limits or try again later.", e);
+            for (Throwable cause = e; cause != null; cause = cause.getCause()) {
+                if (cause instanceof ApiException apiException) {
+                    if (apiException.code() == 429) {
+                        throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS,
+                                "AI service quota exceeded. Please check your API limits or try again later.", e);
+                    }
+                    if (apiException.code() == 401 || apiException.code() == 403) {
+                        throw new ResponseStatusException(HttpStatus.BAD_GATEWAY,
+                                "AI service authentication failed. Please check GEMINI_API_KEY configuration.", e);
+                    }
+                    throw new ResponseStatusException(HttpStatus.BAD_GATEWAY,
+                            "AI service error (" + apiException.code() + ")", e);
                 }
-                cause = cause.getCause();
+                if (cause.getMessage() != null && cause.getMessage().contains("429")) {
+                    throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS,
+                            "AI service quota exceeded. Please check your API limits or try again later.", e);
+                }
             }
 
-            throw new ResponseStatusException(HttpStatus.GATEWAY_TIMEOUT, "AI service connection timed out or failed", e);
+            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "AI service connection failed", e);
         }
     }
 
@@ -169,5 +192,22 @@ public class ChatbotService {
         return new ConversationResponse()
                 .conversationId(savedConversation.getId())
                 .title(savedConversation.getTitle());
+    }
+
+    static String formatContent(String rawContent) {
+        if (rawContent == null || rawContent.isBlank()) {
+            return "I am unable to provide a response at this time.";
+        }
+        String cleaned = rawContent
+                .replace("*", "")
+                .replaceAll("[\\r\\n]+", " ")
+                .replaceAll("\\s{2,}", " ")
+                .strip();
+        if (cleaned.isEmpty()) {
+            return "I am unable to provide a response at this time.";
+        }
+        String[] words = cleaned.split("\\s+");
+        // shortcut: hard-cuts at 99 words if the model exceeds the <95-word prompt, upgrade to sentence-boundary trim if needed
+        return words.length >= 100 ? String.join(" ", Arrays.copyOf(words, 99)) : cleaned;
     }
 }

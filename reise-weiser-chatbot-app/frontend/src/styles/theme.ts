@@ -7,13 +7,14 @@ export const lightTheme = {
         primary: '#237a57',
         onPrimary: '#ffffff',
         border: '#d5dfd2',
+        error: '#b42318',
     },
-    fontFamily: "Arial, sans-serif",
+    fontFamily: 'Arial, sans-serif',
 };
 
 export type AppTheme = typeof lightTheme;
 
-export const darkTheme : AppTheme = {
+export const darkTheme: AppTheme = {
     colors: {
         background: '#101d18',
         surface: '#1b2d24',
@@ -21,7 +22,8 @@ export const darkTheme : AppTheme = {
         muted: '#b2c5b8',
         primary: '#78d4a7',
         onPrimary: '#10251b',
-        border: '#354d3e'
+        border: '#354d3e',
+        error: '#f97066',
     },
-    fontFamily: "Arial, sans-serif",
+    fontFamily: 'Arial, sans-serif',
 };

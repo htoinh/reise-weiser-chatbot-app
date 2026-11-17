@@ -1,38 +1,76 @@
+name: reise-weiser
+
 services:
-  database:
-    image: 'postgres:17'
+  db:
+    image: postgres:17
+    pull_policy: missing
+    container_name: reise_weiser_db
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:?POSTGRES_DB is required}
-      POSTGRES_USER: ${POSTGRES_USER:?POSTGRES_USER is required}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
-      POSTGRES_PORT: ${POSTGRES_PORT:?POSTGRES_PORT is required}
+      POSTGRES_DB: ${POSTGRES_DB:-reiseweiser}
+      POSTGRES_USER: ${POSTGRES_USER:-reiseweiser}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-root}
     ports:
-      - "${POSTGRES_PORT:?POSTGRES_PORT is required}:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "pg_isready -U ${POSTGRES_USER:?POSTGRES_USER is required} -d ${POSTGRES_DB:?POSTGRES_DB is required}"
-        ]
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 5s
       timeout: 5s
       retries: 10
+    restart: unless-stopped
 
   pgadmin:
     image: 'dpage/pgadmin4:latest'
+    pull_policy: missing
+    container_name: reise_weiser_pgadmin
     environment:
-        PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:?PGADMIN_DEFAULT_EMAIL is required}
-        PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:?PGADMIN_DEFAULT_PASSWORD is required}
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-admin@admin.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-root}
     ports:
-        - "${PGADMIN_PORT:?PGADMIN_PORT is required}:80"
+      - "${PGADMIN_PORT:-5050}:80"
     volumes:
-        - pgadmin_data:/var/lib/pgadmin
+      - pgadmin_data:/var/lib/pgadmin
     depends_on:
-        database:
-          condition: service_healthy
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+    container_name: reise_weiser_backend
+    ports:
+      - "${SERVER_PORT:-8081}:${SERVER_PORT:-8081}"
+    env_file:
+      - ./backend/.env
+    environment:
+      SERVER_PORT: ${SERVER_PORT:-8081}
+      POSTGRES_URL: jdbc:postgresql://db:5432/${POSTGRES_DB:-reiseweiser}
+      POSTGRES_USER: ${POSTGRES_USER:-reiseweiser}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-root}
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: reise_weiser_frontend
+    ports:
+      - "${FRONTEND_PORT:-3000}:80"
+    depends_on:
+      backend:
+        condition: service_started
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1/ > /dev/null || exit 1"]
+      interval: 15s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+    restart: unless-stopped
 
 volumes:
-    postgres_data:
-    pgadmin_data:
+  postgres_data:
+  pgadmin_data:

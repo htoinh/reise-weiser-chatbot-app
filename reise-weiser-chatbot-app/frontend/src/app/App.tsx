@@ -1,12 +1,14 @@
-import {Navigate, NavLink, Route, Routes} from 'react-router-dom';
-import {useState} from 'react';
-import styled, {ThemeProvider} from 'styled-components';
-import { GlobalStyle } from '../styles/GlobalStyles.ts';
-import {darkTheme, lightTheme} from "../styles/theme";
-import Login from "../pages/Login";
-import Register from "../pages/Register";
-import Chat from "../pages/Chat";
-import About from "../pages/About";
+import { Navigate, NavLink, Route, Routes, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import styled, { ThemeProvider } from 'styled-components';
+import { AuthProvider } from '../auth/AuthProvider';
+import { useAuth } from '../auth/authContext';
+import { GlobalStyle } from '../styles/GlobalStyles';
+import { darkTheme, lightTheme } from '../styles/theme';
+import Login from '../pages/Login';
+import Register from '../pages/Register';
+import Chat from '../pages/Chat';
+import About from '../pages/About';
 
 const Header = styled.header`
     display: flex;
@@ -15,12 +17,12 @@ const Header = styled.header`
     flex-wrap: wrap;
     gap: 1rem;
     padding: 1.25rem 2rem;
-    background: ${({theme}) => theme.colors.surface};
-    border-bottom: 1px solid ${({theme}) => theme.colors.border};
+    background: ${({ theme }) => theme.colors.surface};
+    border-bottom: 1px solid ${({ theme }) => theme.colors.border};
 `;
 
 const Brand = styled(NavLink)`
-    color: ${({theme}) => theme.colors.primary};
+    color: ${({ theme }) => theme.colors.primary};
     font-size: 1.4rem;
     font-weight: 700;
     text-decoration: none;
@@ -39,9 +41,21 @@ const Navigation = styled.nav`
     }
 
     a.active {
-        color: ${({theme}) => theme.colors.primary};
-        border-bottom-color: ${({theme}) => theme.colors.primary};
+        color: ${({ theme }) => theme.colors.primary};
+        border-bottom-color: ${({ theme }) => theme.colors.primary};
     }
+`;
+
+const Actions = styled.div`
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+`;
+
+const UserBadge = styled.span`
+    color: ${({ theme }) => theme.colors.muted};
+    font-size: 0.9rem;
 `;
 
 const Content = styled.main`
@@ -50,51 +64,104 @@ const Content = styled.main`
     padding: 0 1.5rem;
 
     p {
-        color: ${({theme}) => theme.colors.muted};
+        color: ${({ theme }) => theme.colors.muted};
         line-height: 1.6;
     }
 `;
 
-const ThemeButton = styled.button`
- padding: 0.6rem 1rem;
- border: 1px solid ${({ theme }) => theme.colors.border};
- border-radius: 999px;
- background: ${({ theme }) => theme.colors.background};
- color: ${({ theme }) => theme.colors.text};
- cursor: pointer;
+const ActionButton = styled.button`
+    padding: 0.6rem 1rem;
+    border: 1px solid ${({ theme }) => theme.colors.border};
+    border-radius: 999px;
+    background: ${({ theme }) => theme.colors.background};
+    color: ${({ theme }) => theme.colors.text};
 `;
 
-export default function App() {
-    const [darkMode, setDarkMode] = useState(
-        () => window.matchMedia("(prefers-color-scheme: dark)").matches,
-    );
+function AppShell({ darkMode, onToggleTheme }: { darkMode: boolean; onToggleTheme: () => void }) {
+    const { isAuthenticated, userEmail, logout } = useAuth();
+    const navigate = useNavigate();
+
     return (
-        <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
-            <GlobalStyle />
+        <>
             <Header>
-                <Brand to="/about"> ReiseWeiser</Brand>
+                <Brand to="/about">ReiseWeiser</Brand>
                 <Navigation aria-label="Main navigation">
-                    <NavLink to="/login">Login</NavLink>
-                    <NavLink to="/register">Register</NavLink>
-                    <NavLink to="/chat">Chat</NavLink>
+                    {isAuthenticated ? (
+                        <NavLink to="/chat">Chat</NavLink>
+                    ) : (
+                        <>
+                            <NavLink to="/login">Login</NavLink>
+                            <NavLink to="/register">Register</NavLink>
+                        </>
+                    )}
                     <NavLink to="/about">About</NavLink>
                 </Navigation>
 
-                <ThemeButton onClick={() => setDarkMode((current) => !current)}>
-                    Switch to {darkMode ? 'dark' : 'light'} mode
-                </ThemeButton>
+                <Actions>
+                    {isAuthenticated && (
+                        <>
+                            {userEmail && <UserBadge>{userEmail}</UserBadge>}
+                            <ActionButton
+                                type="button"
+                                onClick={() => {
+                                    logout();
+                                    navigate('/login', { replace: true });
+                                }}
+                            >
+                                Logout
+                            </ActionButton>
+                        </>
+                    )}
+                    <ActionButton type="button" onClick={onToggleTheme}>
+                        Switch to {darkMode ? 'light' : 'dark'} mode
+                    </ActionButton>
+                </Actions>
             </Header>
 
             <Content>
                 <Routes>
-                    <Route path="/" element={<Navigate to="/login" replace/>}/>
-                    <Route path="/login" element={<Login/>}/>
-                    <Route path="/register" element={<Register/>}/>
-                    <Route path="/chat" element={<Chat/>}/>
-                    <Route path="/about" element={<About/>}/>
+                    <Route
+                        path="/"
+                        element={<Navigate to={isAuthenticated ? '/chat' : '/login'} replace />}
+                    />
+                    <Route
+                        path="/login"
+                        element={isAuthenticated ? <Navigate to="/chat" replace /> : <Login />}
+                    />
+                    <Route
+                        path="/register"
+                        element={isAuthenticated ? <Navigate to="/chat" replace /> : <Register />}
+                    />
+                    <Route
+                        path="/chat"
+                        element={isAuthenticated ? <Chat /> : <Navigate to="/login" replace />}
+                    />
+                    <Route path="/about" element={<About />} />
+                    <Route
+                        path="*"
+                        element={<Navigate to={isAuthenticated ? '/chat' : '/login'} replace />}
+                    />
                 </Routes>
             </Content>
+        </>
+    );
+}
 
+export default function App() {
+    const [darkMode, setDarkMode] = useState(
+        () =>
+            typeof window !== 'undefined' &&
+            (window.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false),
+    );
+    return (
+        <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
+            <GlobalStyle />
+            <AuthProvider>
+                <AppShell
+                    darkMode={darkMode}
+                    onToggleTheme={() => setDarkMode((current) => !current)}
+                />
+            </AuthProvider>
         </ThemeProvider>
     );
 }
