@@ -5,6 +5,8 @@ dist-ssr
 coverage
 src/test
 tests
+vitest.config.ts
+tsconfig.test.json
 *.log
 .env
 .env.*

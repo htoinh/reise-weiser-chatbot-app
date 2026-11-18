@@ -1,66 +1,28 @@
-import { Navigate, NavLink, Route, Routes, useNavigate } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { useState } from 'react';
 import styled, { ThemeProvider } from 'styled-components';
 import { AuthProvider } from '../auth/AuthProvider';
 import { useAuth } from '../auth/authContext';
+import Footer from '../components/Footer';
+import Navbar from '../components/Navbar';
 import { GlobalStyle } from '../styles/GlobalStyles';
 import { darkTheme, lightTheme } from '../styles/theme';
+import About from '../pages/About';
+import Chat from '../pages/Chat';
 import Login from '../pages/Login';
 import Register from '../pages/Register';
-import Chat from '../pages/Chat';
-import About from '../pages/About';
 
-const Header = styled.header`
+const Shell = styled.div`
+    min-height: 100dvh;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 1rem;
-    padding: 1.25rem 2rem;
-    background: ${({ theme }) => theme.colors.surface};
-    border-bottom: 1px solid ${({ theme }) => theme.colors.border};
-`;
-
-const Brand = styled(NavLink)`
-    color: ${({ theme }) => theme.colors.primary};
-    font-size: 1.4rem;
-    font-weight: 700;
-    text-decoration: none;
-`;
-
-const Navigation = styled.nav`
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 1.25rem;
-
-    a {
-        text-decoration: none;
-        padding: 0.4rem 0;
-        border-bottom: 2px solid transparent;
-    }
-
-    a.active {
-        color: ${({ theme }) => theme.colors.primary};
-        border-bottom-color: ${({ theme }) => theme.colors.primary};
-    }
-`;
-
-const Actions = styled.div`
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-`;
-
-const UserBadge = styled.span`
-    color: ${({ theme }) => theme.colors.muted};
-    font-size: 0.9rem;
+    flex-direction: column;
 `;
 
 const Content = styled.main`
+    flex: 1;
+    width: 100%;
     max-width: 70rem;
-    margin: 3rem auto;
+    margin: 2rem auto;
     padding: 0 1.5rem;
 
     p {
@@ -69,54 +31,12 @@ const Content = styled.main`
     }
 `;
 
-const ActionButton = styled.button`
-    padding: 0.6rem 1rem;
-    border: 1px solid ${({ theme }) => theme.colors.border};
-    border-radius: 999px;
-    background: ${({ theme }) => theme.colors.background};
-    color: ${({ theme }) => theme.colors.text};
-`;
-
 function AppShell({ darkMode, onToggleTheme }: { darkMode: boolean; onToggleTheme: () => void }) {
-    const { isAuthenticated, userEmail, logout } = useAuth();
-    const navigate = useNavigate();
+    const { isAuthenticated } = useAuth();
 
     return (
-        <>
-            <Header>
-                <Brand to="/about">ReiseWeiser</Brand>
-                <Navigation aria-label="Main navigation">
-                    {isAuthenticated ? (
-                        <NavLink to="/chat">Chat</NavLink>
-                    ) : (
-                        <>
-                            <NavLink to="/login">Login</NavLink>
-                            <NavLink to="/register">Register</NavLink>
-                        </>
-                    )}
-                    <NavLink to="/about">About</NavLink>
-                </Navigation>
-
-                <Actions>
-                    {isAuthenticated && (
-                        <>
-                            {userEmail && <UserBadge>{userEmail}</UserBadge>}
-                            <ActionButton
-                                type="button"
-                                onClick={() => {
-                                    logout();
-                                    navigate('/login', { replace: true });
-                                }}
-                            >
-                                Logout
-                            </ActionButton>
-                        </>
-                    )}
-                    <ActionButton type="button" onClick={onToggleTheme}>
-                        Switch to {darkMode ? 'light' : 'dark'} mode
-                    </ActionButton>
-                </Actions>
-            </Header>
+        <Shell>
+            <Navbar darkMode={darkMode} onToggleTheme={onToggleTheme} />
 
             <Content>
                 <Routes>
@@ -143,7 +63,9 @@ function AppShell({ darkMode, onToggleTheme }: { darkMode: boolean; onToggleThem
                     />
                 </Routes>
             </Content>
-        </>
+
+            <Footer />
+        </Shell>
     );
 }
 

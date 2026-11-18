@@ -1,12 +1,16 @@
 ChatMessageRequest:
   type: object
   required:
+    - conversationId
     - promptMessage
   properties:
     conversationId:
       type: integer
       format: int64
-      description: Include to continue a conversation.
+      description: Conversation ID owned by the authenticated user.
     promptMessage:
       type: string
+      minLength: 1
+      maxLength: 2000
+      pattern: '(?s).*\S.*'
       example: "What destinations are visited in Montenegro?"

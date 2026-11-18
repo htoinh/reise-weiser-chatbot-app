@@ -1,4 +1,8 @@
 pluginManagement {
+    if (System.getProperty('os.name', '').toLowerCase(Locale.ROOT).contains('win')
+            && System.getProperty('javax.net.ssl.trustStoreType') == null) {
+        System.setProperty('javax.net.ssl.trustStoreType', 'Windows-ROOT')
+    }
     repositories {
         gradlePluginPortal()
         mavenCentral()

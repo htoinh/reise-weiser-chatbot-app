@@ -1,12 +1,12 @@
 package com.studiosus.trainee.service;
 
 import com.google.genai.errors.ApiException;
-import com.studiosus.trainee.entity.Conversation;
 import com.studiosus.trainee.dtos.ChatHistoryResponseInner;
 import com.studiosus.trainee.dtos.ChatMessageRequest;
 import com.studiosus.trainee.dtos.ChatMessageResponse;
 import com.studiosus.trainee.dtos.ConversationResponse;
 import com.studiosus.trainee.entity.ChatMessage;
+import com.studiosus.trainee.entity.Conversation;
 import com.studiosus.trainee.repository.ChatbotRepository;
 import com.studiosus.trainee.repository.ConversationRepository;
 import com.studiosus.trainee.repository.UserRepository;
@@ -18,12 +18,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.net.SocketTimeoutException;
+import java.net.http.HttpTimeoutException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 @Slf4j
@@ -35,7 +35,6 @@ public class ChatbotService {
     private final ConversationRepository conversationRepository;
     private final UserRepository userRepository;
 
-
     public ChatbotService(ChatClient.Builder chatClientBuilder, ChatbotRepository chatbotRepository, ConversationRepository conversationRepository, UserRepository userRepository) {
         this.chatClient = chatClientBuilder.build();
         this.chatbotRepository = chatbotRepository;
@@ -43,93 +42,84 @@ public class ChatbotService {
         this.userRepository = userRepository;
     }
 
-    @Transactional
     public ChatMessageResponse processMessage(ChatMessageRequest request) {
         log.info("Routing user prompt to AI endpoint for conversationId: {}", request.getConversationId());
-        log.info("Request Prompt: {}", request.getPromptMessage());
 
         String email = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
 
-       var conversation = conversationRepository
+        var conversation = conversationRepository
                 .findByIdAndUser_Email(request.getConversationId(), email)
-                .orElseThrow(()-> new ResponseStatusException(HttpStatus.FORBIDDEN, "Conversation not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "Conversation not found"));
 
         try {
-            log.info("Attempting to connect to Google Gemini AI...");
-            var aiResponse = CompletableFuture.supplyAsync(() -> chatClient.prompt()
-                            .system("""
-                                    Reply in plain text only as a single paragraph without Markdown, asterisks (*), bullet points, or line breaks.
-                                    Keep your answer strictly under 95 words.
-                                    """)
-                            .user(request.getPromptMessage())
-                            .call()
-                            .content())
-                    .get(60, TimeUnit.SECONDS);
+            var aiResponse = chatClient.prompt()
+                    .system("""
+                            Reply in plain text only as a single paragraph without Markdown, asterisks (*), bullet points, or line breaks.
+                            Keep your answer strictly under 95 words.
+                            """)
+                    .user(request.getPromptMessage())
+                    .call()
+                    .content();
 
-            log.info("Successfully connected and received response from Gemini AI: {}", aiResponse);
+            log.info("Received response from Gemini AI for conversationId: {}", request.getConversationId());
 
-
-            //Generate a title according to the prompt
-            if ("New conversation".equals(conversation.getTitle())
-                    || "Test conversation".equals(conversation.getTitle())){
+            boolean shouldUpdateTitle = "New conversation".equals(conversation.getTitle())
+                    || "Test conversation".equals(conversation.getTitle());
+            String updatedTitle = null;
+            if (shouldUpdateTitle) {
                 String prompt = request.getPromptMessage().strip();
-                String title = prompt.substring(0, Math.min(prompt.length(), 80));
+                updatedTitle = prompt.substring(0, Math.min(prompt.length(), 80));
 
                 try {
-                    String generatedTitle = CompletableFuture.supplyAsync(() ->
-                            chatClient.prompt()
-                                    .system("""
-                               Create a short conversation title of 5–8 words.
-                               Use the same language as the user's message.
-                               Return only the title, without quotation marks.
-                               """)
-                                    .user(prompt)
-                                    .call()
-                                    .content()
-                    ).get(15, TimeUnit.SECONDS);
+                    String generatedTitle = chatClient.prompt()
+                            .system("""
+                                    Create a short conversation title of 5–8 words.
+                                    Use the same language as the user's message.
+                                    Return only the title, without quotation marks.
+                                    """)
+                            .user(prompt)
+                            .call()
+                            .content();
                     if (generatedTitle != null && !generatedTitle.isBlank()) {
-                        title = generatedTitle.strip();
-                        title = title.substring(0, Math.min(title.length(), 80));
+                        updatedTitle = generatedTitle.strip();
+                        updatedTitle = updatedTitle.substring(0, Math.min(updatedTitle.length(), 80));
                     }
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    log.warn("Title generation interrupted; using prompt as title");
                 } catch (Exception e) {
-                    log.warn("Title generation failed; using prompt as title");
+                    log.warn("Title generation failed for conversationId={}; using prompt fallback", request.getConversationId());
                 }
-                conversation.setTitle(title);
             }
 
-            ChatMessageResponse responseDto = new ChatMessageResponse();
-            responseDto.setConversationId(request.getConversationId());
-            responseDto.setContent(formatContent(aiResponse));
-
-            log.info("Returning mapped response to client: {}", responseDto);
-            ChatMessage message = ChatMessage.builder()
+            String formatted = formatContent(aiResponse);
+            ChatMessage savedMessage = chatbotRepository.save(ChatMessage.builder()
                     .conversationId(request.getConversationId())
                     .userPrompt(request.getPromptMessage())
-                    .aiResponse(responseDto.getContent())
+                    .aiResponse(formatted)
                     .createdAt(LocalDateTime.now())
-                    .build();
+                    .build());
 
-            ChatMessage savedMessage = chatbotRepository.save(message);
-            responseDto.setMessageId(savedMessage.getId());
-            log.info("Returning mapped response to client: {}", responseDto);
-            return responseDto;
+            if (updatedTitle != null) {
+                conversation.setTitle(updatedTitle);
+                conversation.setUpdatedAt(LocalDateTime.now());
+                conversationRepository.save(conversation);
+            }
 
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            log.error("AI request was interrupted", e);
-            throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "AI service request was interrupted", e);
-        } catch (TimeoutException e) {
-            log.error("Timed out waiting for Google Gemini AI response", e);
-            throw new ResponseStatusException(HttpStatus.GATEWAY_TIMEOUT, "AI service connection timed out", e);
+            log.info("Saved chat message id={} for conversationId={}", savedMessage.getId(), request.getConversationId());
+            return new ChatMessageResponse()
+                    .conversationId(request.getConversationId())
+                    .messageId(savedMessage.getId())
+                    .content(formatted);
+
         } catch (Exception e) {
-            log.error("Failed to connect to Google Gemini AI. Reason: {}", e.getMessage(), e);
+            log.error("Failed to connect to Google Gemini AI for conversationId={}. Reason: {}", request.getConversationId(), e.getMessage());
 
             for (Throwable cause = e; cause != null; cause = cause.getCause()) {
+                if (cause instanceof TimeoutException
+                        || cause instanceof HttpTimeoutException
+                        || cause instanceof SocketTimeoutException) {
+                    throw new ResponseStatusException(HttpStatus.GATEWAY_TIMEOUT, "AI service connection timed out", e);
+                }
                 if (cause instanceof ApiException apiException) {
                     if (apiException.code() == 429) {
                         throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS,

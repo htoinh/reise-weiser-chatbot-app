@@ -5,3 +5,15 @@ AuthResponse:
   properties:
     token:
       type: string
+    name:
+      type: string
+
+UserProfileResponse:
+  type: object
+  required:
+    - email
+  properties:
+    email:
+      type: string
+    name:
+      type: string

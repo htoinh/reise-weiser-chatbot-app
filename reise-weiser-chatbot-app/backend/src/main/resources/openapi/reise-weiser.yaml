@@ -12,6 +12,8 @@ paths:
     $ref: './paths/auth-register.yaml'
   /login:
     $ref: './paths/auth-login.yaml'
+  /current-user:
+    $ref: './paths/auth-current-user.yaml'
   /chat-history:
     $ref: './paths/chat-history.yaml'
   /chatbot/message:

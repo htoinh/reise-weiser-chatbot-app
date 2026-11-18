@@ -1,14 +1,15 @@
 server:
   port: ${SERVER_PORT:8081}
 
+application:
+  security:
+    jwt:
+      secret-key: ${JWT_SECRET_KEY}
+      expiration: ${JWT_EXPIRATION:86400000}
+
 spring:
   config:
     import: "optional:file:${PWD}/.env,optional:file:../.env,optional:file:.env[.properties]"
-  autoconfigure:
-    exclude:
-      - org.springframework.ai.model.google.genai.autoconfigure.embedding.GoogleGenAiEmbeddingConnectionAutoConfiguration
-      - org.springframework.ai.model.google.genai.autoconfigure.embedding.GoogleGenAiTextEmbeddingAutoConfiguration
-      - org.springframework.ai.vectorstore.pgvector.autoconfigure.PgVectorStoreAutoConfiguration
   application:
     name: reise-weiser-chatbot-app
   ai:
@@ -26,7 +27,7 @@ spring:
     url: ${POSTGRES_URL}
     username: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
-    driver-class-name: org.postgresql.Driver
+    driver-class-name: ${POSTGRES_DRIVER:org.postgresql.Driver}
 
   jpa:
     open-in-view: false
@@ -42,7 +43,7 @@ spring:
 
 springdoc:
   api-docs:
-   path: /v3/api-docs
+    path: /v3/api-docs
   swagger-ui:
-   path: /swagger-ui.html
-   url: /openapi/reise-weiser.yaml
+    path: /swagger-ui.html
+    url: /openapi/reise-weiser.yaml

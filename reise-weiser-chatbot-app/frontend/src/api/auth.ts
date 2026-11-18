@@ -13,6 +13,12 @@ export interface RegisterRequest {
 
 export interface AuthResponse {
     token: string;
+    name?: string;
+}
+
+export interface UserProfileResponse {
+    email: string;
+    name?: string;
 }
 
 // shortcut: OpenAPI serves /login and /register at root, proxied via /api/login and /api/register
@@ -22,4 +28,8 @@ export function loginUser(payload: LoginRequest): Promise<AuthResponse> {
 
 export function registerUser(payload: RegisterRequest): Promise<AuthResponse> {
     return apiClient.post<AuthResponse>('/register', payload, { skipAuth: true });
+}
+
+export function fetchCurrentUser(signal?: AbortSignal): Promise<UserProfileResponse> {
+    return apiClient.get<UserProfileResponse>('/current-user', { signal });
 }

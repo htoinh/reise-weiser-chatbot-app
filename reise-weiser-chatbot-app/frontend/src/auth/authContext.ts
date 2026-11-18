@@ -4,6 +4,7 @@ import type { LoginRequest, RegisterRequest } from '../api/auth';
 export interface AuthContextValue {
     token: string | null;
     userEmail: string | null;
+    userName: string | null;
     isAuthenticated: boolean;
     login: (credentials: LoginRequest) => Promise<void>;
     register: (data: RegisterRequest) => Promise<void>;

@@ -3,7 +3,7 @@ FROM eclipse-temurin:25-jdk AS builder
 WORKDIR /app
 COPY . .
 
-RUN sed -i 's/\r$//' gradlew && sed -i 's/Windows-ROOT/PKCS12/' gradle.properties && sh gradlew -Djavax.net.ssl.trustStoreType=PKCS12 bootJar --no-daemon
+RUN sed -i 's/\r$//' gradlew && sh gradlew bootJar --no-daemon
 
 # Stage 2: Run
 FROM eclipse-temurin:25-jre

@@ -1,258 +1,147 @@
 # 🛠️ ReiseWeiser Backend
 
-The ReiseWeiser backend provides the REST API, database persistence, authentication, conversation management and future Gemini integration.
+The ReiseWeiser backend is a contract-first **Spring Boot 4** REST API written in **Java 25**. It provides stateless JWT authentication, user-scoped conversation and chat history persistence in **PostgreSQL 17**, and AI travel assistance via **Spring AI (Google Gemini)**.
 
-> 🚧 **Current status:** PostgreSQL, pgAdmin, Spring Data JPA and Flyway database migrations are configured. Authentication, chat endpoints and AI integration will be implemented in later project phases.
+---
 
-## 🧰 Technology stack
+## 🧰 Technology Stack
 
-- ☕ Java
-- 🌱 Spring Boot
-- 🐘 PostgreSQL
-- 🗃️ Spring Data JPA and Hibernate
-- 🛫 Flyway
-- 🐘 pgAdmin
-- 🐳 Docker Compose
-- 🔐 Spring Security and JWT
-- 🤖 Spring AI and Google Gemini 
-- 📖 OpenAPI and Swagger UI 
+- ☕ **Java 25** (Gradle `9.8.0` toolchain)
+- 🌱 **Spring Boot `4.0.6`** (WebMVC, Validation, Actuator)
+- 🔐 **Spring Security & JWT** (`io.jsonwebtoken:jjwt:0.12.5` + BCrypt)
+- 🤖 **Spring AI `2.0.0`** (Google GenAI / Gemini `ChatClient`)
+- 🐘 **PostgreSQL 17**, **Spring Data JPA / Hibernate**, and **Flyway** (`V1`–`V8`)
+- 📖 **OpenAPI Generator `7.4.0`** & **SpringDoc Swagger UI `3.1.0`**
+- 🧪 **JUnit 5**, **Mockito**, **MockMvc**, **Testcontainers** (`postgres:17`), and **JaCoCo**
+
+---
 
 ## ✅ Prerequisites
 
-Before running the backend, install:
+- **JDK 25**
+- **Docker Desktop** (for PostgreSQL 17, pgAdmin, and Testcontainers integration tests)
+- **Git**
 
-- The Java version configured in `build.gradle`
-- Docker Desktop with Linux containers enabled
-- Git
+---
 
-PostgreSQL and pgAdmin are managed by the root `compose.yaml`.
+## 🔐 Environment Configuration
 
-## 🔐 Environment configuration
-
-From the repository root, copy the example file:
-
-```bash
-cp .env.example .env
-```
-
-PowerShell:
+Create `backend/.env` from `backend/.env.example`:
 
 ```powershell
-Copy-Item .env.example .env
+Copy-Item backend/.env.example backend/.env
 ```
 
-Configure local values:
+Configure the required variables in `backend/.env` (never commit `.env`):
 
 ```dotenv
-POSTGRES_DB=reiseweiser
-POSTGRES_USER=reiseweiser
-POSTGRES_PASSWORD=choose_a_local_database_password
-POSTGRES_PORT=5432
+SERVER_PORT=8081
 POSTGRES_URL=jdbc:postgresql://localhost:5432/reiseweiser
-
-PGADMIN_EMAIL=admin@reiseweiser.com
-PGADMIN_PASSWORD=choose_a_local_pgadmin_password
-PGADMIN_PORT=5050
+POSTGRES_USER=reiseweiser
+POSTGRES_PASSWORD=root
 
 GEMINI_API_KEY=your_google_ai_studio_api_key
-GEMINI_MODEL=gemini-3.8-flash
+GEMINI_MODEL=gemini-2.5-flash-lite
+
+JWT_SECRET_KEY=change-me-local-dev-jwt-secret-key-at-least-32-bytes
+JWT_EXPIRATION=86400000
 ```
 
-The `.env` file is local and must not be committed.
+*(When running inside Docker Compose, `compose.yaml` overrides `POSTGRES_URL` automatically to `jdbc:postgresql://db:5432/reiseweiser`.)*
 
-<a id="docker-compose"></a>
-## 🐳 Start PostgreSQL and pgAdmin
+---
+
+## ▶️ Running the Backend
+
+### Option A: Full Stack via Docker Compose
 
 From the repository root:
 
 ```bash
-docker compose up -d
-docker compose ps
+docker compose up --build -d backend
 ```
 
-Expected services:
+### Option B: Local Gradle Run (with Docker PostgreSQL)
 
-```text
-database
-pgadmin
-```
+1. Start PostgreSQL (and optionally pgAdmin) from the repository root:
+   ```bash
+   docker compose up -d db pgadmin
+   ```
+2. Start the Spring Boot application from `backend/`:
+   ```powershell
+   .\gradlew.bat bootRun
+   ```
+   *(Git Bash / Linux / macOS: `./gradlew bootRun`)*
 
-## 🐘 Open pgAdmin
+The API listens on `http://localhost:8081` and serves Swagger UI at `http://localhost:8081/swagger-ui.html`.
 
-Open:
+### Connecting pgAdmin (`http://localhost:5050`)
 
-```text
-http://localhost:5050
-```
+When registering the PostgreSQL server in pgAdmin (**Register → Server → Connection**), use the Docker service name `db`:
+- **Host name/address**: `db`
+- **Port**: `5432`
+- **Maintenance database**: `reiseweiser`
+- **Username / Password**: values of `POSTGRES_USER` / `POSTGRES_PASSWORD` (defaults: `reiseweiser` / `root`)
 
-Log in using:
+---
 
-```text
-Email: value of PGADMIN_EMAIL
-Password: value of PGADMIN_PASSWORD
-```
+## 📖 REST API Endpoints
 
-Register the PostgreSQL server through **Register → Server**.
+Interfaces (`com.studiosus.trainee.apis`) and DTOs (`com.studiosus.trainee.dtos`) are generated from `src/main/resources/openapi/reise-weiser.yaml`:
 
-### General
+| Method | Path | Auth | Description |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/register` | Public | Register a new user (`name`, `email`, `password`) and return `{ token, name }`. |
+| `POST` | `/login` | Public | Authenticate credentials (`email`, `password`) and return `{ token, name }`. |
+| `GET` | `/current-user` | Bearer JWT | Return the authenticated user's `{ email, name }` profile. |
+| `POST` | `/chatbot/conversation` | Bearer JWT | Create a new conversation owned by the authenticated user (`201 Created`). |
+| `POST` | `/chatbot/message` | Bearer JWT | Send `{ conversationId, promptMessage }` to Gemini, persist the exchange, and return `{ messageId, conversationId, content }`. |
+| `GET` | `/chat-history` | Bearer JWT | Return the authenticated user's chronological message history across conversations. |
 
-```text
-Name: ReiseWeiser Local
-```
+---
 
-### Connection
+## 🗄️ Database Migrations (Flyway)
 
-```text
-Host name/address: database
-Port: 5432
-Maintenance database: reiseweiser
-Username: reiseweiser
-Password: value of POSTGRES_PASSWORD
-```
-
-The hostname is `database` because pgAdmin and PostgreSQL run in the same Docker network.
-
-<a id="run-the-backend"></a>
-## ▶️ Run the backend
-### IntelliJ IDEA
-1. Start PostgreSQL and pgAdmin using [Docker Compose](#docker-compose).
-2. Open **Run → Edit Configurations**.
-3. Select `ReiseWeiserChatbotApplication`.
-4. Add the values from `.env` under **Environment variables**.
-5. Apply the changes and run the application.
-### Git Bash
-From the repository root:
-```bash
-docker compose up -d
-set -a
-source .env
-set +a
-cd backend
-./gradlew bootRun
-```
-The backend starts at:
-
-```text
-http://localhost:8080
-```
-
-## 🗄️ Database migrations
-
-Flyway manages the database schema through versioned SQL files:
+Flyway runs versioned SQL migrations from `src/main/resources/db/migration/` on startup with `spring.jpa.hibernate.ddl-auto=validate`:
 
 ```text
 src/main/resources/db/migration/
 ├── V1__create_users.sql
 ├── V2__create_conversations.sql
-└── V3__create_messages.sql
+├── V3__create_messages.sql
+├── V4__update_user_fields.sql
+├── V5__create_chat_messages.sql
+├── V7__drop_unused_messages.sql
+└── V8__add_chat_messages_fk_and_index.sql
 ```
 
-| Table | Purpose |
-|---|---|
-| `users` | Registered users and BCrypt password hashes |
-| `conversations` | Chat conversations owned by users |
-| `messages` | User and assistant messages |
-| `flyway_schema_history` | Applied database-migration history |
-| `chat_message` | Stored prompts, AI answers, conversation IDs and creation timestamps |
+| Active Table | Purpose |
+| :--- | :--- |
+| `users` | Registered accounts (`id`, `email`, `password_hash`, `name`, timestamps) |
+| `conversations` | User-owned conversations (`id`, `user_id`, `title`, timestamps) |
+| `chat_messages` | Stored user prompts and AI answers (`id`, `conversation_id`, `user_prompt`, `ai_response`, `created_at`) |
+| `flyway_schema_history` | Applied Flyway migration metadata |
 
-## 🧹 Useful Gradle commands
+---
 
-Build the backend:
+## 🧪 Testing & JaCoCo Coverage
 
-```bash
-./gradlew clean build
+Run all unit, `@WebMvcTest`, security, and Testcontainers (`postgres:17`) repository integration tests with JaCoCo verification:
+
+```powershell
+.\gradlew test jacocoTestCoverageVerification
 ```
 
-Run the backend:
+- **HTML coverage report**: `backend/build/reports/jacoco/test/html/index.html`
+- **XML coverage report**: `backend/build/reports/jacoco/test/jacocoTestReport.xml`
+- **Coverage gate**: Enforces `>= 80%` line coverage across `com.studiosus.trainee.controller.*` and `com.studiosus.trainee.service.*` (excluding OpenAPI-generated stubs).
 
-```bash
-./gradlew bootRun
+### Other Useful Gradle Commands
+
+```powershell
+# Regenerate OpenAPI interfaces and DTOs
+.\gradlew openApiGenerate
+
+# Full clean build (includes tests + JaCoCo verification)
+.\gradlew clean build
 ```
-
-Run backend tests:
-
-```bash
-./gradlew test
-```
-
-Clean generated build files:
-
-```bash
-./gradlew clean
-```
-Generate API interfaces and DTOs from the OpenAPI specification:
-```bash
-./gradlew openApiGenerate
-```
-## 🛑 Stop the services
-
-From the repository root:
-
-```bash
-docker compose stop
-```
-
-This stops the containers but keeps their data.
-
-> ⚠️ `docker compose down -v` deletes the database volumes and all locally stored data.
-
-## 📮 Test with Postman 
-Start the [backend](#run-the-backend) and [docker compose](#docker-compose) services in different terminals:
-
-Wait for the application startup confirmation and keep the terminals running.
-### Register a user
-Configure the request:
-- **Method:** POST
-- **URL:** `http://localhost:8080/api/auth/register`
-```json
-{
- "email": "test@example.com",
- "password": "TestPassword123!",
- "name": "Test User"
-}
-```
-### Log in
-Configure the request:
-- **Method:** POST
-- **URL:** `http://localhost:8080/api/auth/login`
-```json
-{
- "email": "test@example.com",
- "password": "TestPassword123!"
-}
-```
-
-To check invalid credentials, resend the login request with an incorrect password. The required response is **401 Unauthorized**.
-
-## 🧪 Test with Swagger UI
-
-1. [Start the backend](#run-the-backend) with PostgreSQL running.
-
-2. Open http://localhost:8080/swagger-ui.html.
-
-3. Execute `POST /register` with a new email, password and name.
-
-4. Execute `POST /login` using the registered email and password.
-
-5. Copy the returned JWT. Click **Authorize**, paste the token without
-
-   the `Bearer ` prefix, and authorize.
-
-### Create a conversation
-
-Execute `POST /conversations`. No request body is required.
-
-### Send a message
-
-Execute `POST /chatbot/message` using the returned conversation ID:
-
-```json
-{
-  "conversationId": 1,
-  "promptMessage": "Suggest three places to visit in Berlin."
-}
-```
-
-### Retrieve chat history
-
-Execute `GET /chat-history`. No request body is required.

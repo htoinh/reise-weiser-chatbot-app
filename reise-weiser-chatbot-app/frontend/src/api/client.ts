@@ -4,6 +4,7 @@ export const TOKEN_STORAGE_KEY = 'reiseweiser_token';
 
 interface JwtClaims {
     sub?: string;
+    name?: string;
     exp?: number;
 }
 
@@ -31,7 +32,9 @@ function parseJwtClaims(token: string): JwtClaims | null {
     try {
         const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
         const padded = base64.padEnd(Math.ceil(base64.length / 4) * 4, '=');
-        return JSON.parse(atob(padded)) as JwtClaims;
+        const binary = atob(padded);
+        const bytes = Uint8Array.from(binary, (ch) => ch.charCodeAt(0));
+        return JSON.parse(new TextDecoder().decode(bytes)) as JwtClaims;
     } catch {
         return null;
     }
@@ -43,6 +46,16 @@ export function extractEmailFromToken(token: string | null): string | null {
     }
     const claims = parseJwtClaims(token);
     return typeof claims?.sub === 'string' && claims.sub.length > 0 ? claims.sub : null;
+}
+
+export function extractNameFromToken(token: string | null): string | null {
+    if (!token) {
+        return null;
+    }
+    const claims = parseJwtClaims(token);
+    return typeof claims?.name === 'string' && claims.name.trim().length > 0
+        ? claims.name.trim()
+        : null;
 }
 
 export function setToken(token: string): void {
@@ -82,10 +95,12 @@ export interface ApiRequestOptions extends Omit<RequestInit, 'body'> {
 }
 
 function resolveErrorMessage(status: number, parsed: unknown, skipAuth?: boolean): string {
-    if (parsed && typeof parsed === 'object' && 'message' in parsed) {
-        const serverMessage = (parsed as { message?: unknown }).message;
-        if (typeof serverMessage === 'string' && serverMessage.trim().length > 0) {
-            return serverMessage;
+    if (parsed && typeof parsed === 'object') {
+        for (const key of ['message', 'detail'] as const) {
+            const value = (parsed as Record<string, unknown>)[key];
+            if (typeof value === 'string' && value.trim().length > 0) {
+                return value;
+            }
         }
     }
     if (status === 401 || (status === 403 && skipAuth)) {
@@ -98,6 +113,15 @@ function resolveErrorMessage(status: number, parsed: unknown, skipAuth?: boolean
     }
     if (status === 400) {
         return 'Please check your input and try again.';
+    }
+    if (status === 429) {
+        return 'AI quota exceeded. Please wait a moment and try again.';
+    }
+    if (status === 504) {
+        return 'The AI service timed out. Please try again.';
+    }
+    if (status === 502 || status === 503) {
+        return 'The AI service is temporarily unavailable. Please try again.';
     }
     return 'Request failed. Please try again.';
 }

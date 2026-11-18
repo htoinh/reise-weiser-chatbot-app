@@ -78,3 +78,9 @@ tmp/
 ._*
 Thumbs.db
 Desktop.ini
+
+### Local AI, docs & browser tooling ###
+.codegraph/
+.playwright-mcp/
+.agent/
+docs/
