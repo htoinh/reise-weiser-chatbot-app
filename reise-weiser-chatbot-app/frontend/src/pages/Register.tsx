@@ -86,7 +86,7 @@ export default function Register() {
                     />
                 </Field>
 
-                <SubmitButton type="submit" disabled={isSubmitting}>
+                <SubmitButton type="submit" disabled={isSubmitting} aria-busy={isSubmitting}>
                     {isSubmitting ? 'Creating account...' : 'Create account'}
                 </SubmitButton>
             </Form>

@@ -71,7 +71,7 @@ export default function Login() {
                     />
                 </Field>
 
-                <SubmitButton type="submit" disabled={isSubmitting}>
+                <SubmitButton type="submit" disabled={isSubmitting} aria-busy={isSubmitting}>
                     {isSubmitting ? 'Signing in...' : 'Sign in'}
                 </SubmitButton>
             </Form>

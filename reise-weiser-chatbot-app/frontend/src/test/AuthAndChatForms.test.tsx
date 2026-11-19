@@ -77,6 +77,7 @@ describe('Form submission & Chat flow', () => {
                     status: 429,
                 });
             }
+            await new Promise((resolve) => setTimeout(resolve, 25));
             return new Response(
                 JSON.stringify({
                     messageId: 55,
@@ -105,8 +106,12 @@ describe('Form submission & Chat flow', () => {
         await user.type(screen.getByLabelText('Chat prompt'), 'Where in Japan?');
         await user.click(screen.getByRole('button', { name: 'Send' }));
 
+        const thinkingStatus = await screen.findByTestId('thinking-indicator');
+        expect(thinkingStatus).toHaveTextContent('ReiseWeiser is thinking....');
+
         expect(await screen.findByText('Where in Japan?')).toBeInTheDocument();
         expect(await screen.findByText('Explore Kyoto temples in spring.')).toBeInTheDocument();
+        expect(screen.queryByTestId('thinking-indicator')).toBeNull();
         expect(screen.getByText('Alice')).toBeInTheDocument();
         expect(screen.getByText('ReiseWeiser')).toBeInTheDocument();
     });

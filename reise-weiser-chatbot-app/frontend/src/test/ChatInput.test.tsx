@@ -15,7 +15,8 @@ describe('ChatInput.tsx', () => {
     it('disables Send button while API call is in progress and re-enables when completed', () => {
         const { rerender } = renderWithProviders(<ChatInput onSend={vi.fn()} disabled={true} />);
 
-        const sendingBtn = screen.getByRole('button', { name: 'Sending...' });
+        const sendingBtn = screen.getByRole('button', { name: 'Sending' });
+        expect(sendingBtn).toHaveTextContent('Sending....');
         expect(sendingBtn).toBeDisabled();
         expect(sendingBtn).toHaveAttribute('aria-busy', 'true');
 

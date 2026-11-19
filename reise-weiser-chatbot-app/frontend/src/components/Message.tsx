@@ -1,16 +1,30 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 const Bubble = styled.article<{ $isUser: boolean }>`
     align-self: ${({ $isUser }) => ($isUser ? 'flex-end' : 'flex-start')};
-    max-width: min(80%, 38rem);
+    max-width: min(82%, 38rem);
     padding: 0.85rem 1.1rem;
     border-radius: ${({ $isUser }) =>
-        $isUser ? '1rem 1rem 0.25rem 1rem' : '1rem 1rem 1rem 0.25rem'};
-    background: ${({ theme, $isUser }) =>
-        $isUser ? theme.colors.primary : theme.colors.background};
-    color: ${({ theme, $isUser }) => ($isUser ? theme.colors.onPrimary : theme.colors.text)};
-    border: 1px solid
-        ${({ theme, $isUser }) => ($isUser ? theme.colors.primary : theme.colors.border)};
+        $isUser ? '1.2rem 1.2rem 0.3rem 1.2rem' : '1.2rem 1.2rem 1.2rem 0.3rem'};
+
+    @media (max-width: 38rem) {
+        max-width: 90%;
+    }
+
+    ${({ $isUser, theme }) =>
+        $isUser
+            ? css`
+                  background: ${theme.glass.primaryGradient};
+                  color: ${theme.colors.onPrimary};
+                  border: 1px solid rgba(255, 255, 255, 0.28);
+                  box-shadow: ${theme.glass.primaryShadow};
+              `
+            : css`
+                  background: ${theme.glass.pillBackground};
+                  color: ${theme.colors.text};
+                  border: 1px solid ${theme.glass.border};
+                  box-shadow: ${theme.glass.pillShadow};
+              `}
 `;
 
 const Meta = styled.div<{ $isUser: boolean }>`

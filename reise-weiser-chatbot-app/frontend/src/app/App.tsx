@@ -1,12 +1,20 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled, { ThemeProvider } from 'styled-components';
 import { AuthProvider } from '../auth/AuthProvider';
 import { useAuth } from '../auth/authContext';
 import Footer from '../components/Footer';
 import Navbar from '../components/Navbar';
 import { GlobalStyle } from '../styles/GlobalStyles';
+import { pageContainerWidth } from '../styles/glass';
 import { darkTheme, lightTheme } from '../styles/theme';
+import {
+    applyThemePreference,
+    isOsDarkMode,
+    resolveInitialDarkMode,
+    subscribeToOsColorScheme,
+    syncFaviconWithOs,
+} from '../styles/themePreference';
 import About from '../pages/About';
 import Chat from '../pages/Chat';
 import Login from '../pages/Login';
@@ -16,14 +24,15 @@ const Shell = styled.div`
     min-height: 100dvh;
     display: flex;
     flex-direction: column;
+    gap: clamp(1rem, 2.5vw, 1.75rem);
 `;
 
 const Content = styled.main`
     flex: 1;
-    width: 100%;
-    max-width: 70rem;
-    margin: 2rem auto;
-    padding: 0 1.5rem;
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    ${pageContainerWidth}
 
     p {
         color: ${({ theme }) => theme.colors.muted};
@@ -31,12 +40,18 @@ const Content = styled.main`
     }
 `;
 
-function AppShell({ darkMode, onToggleTheme }: { darkMode: boolean; onToggleTheme: () => void }) {
+function AppShell({
+    darkMode,
+    onChangeTheme,
+}: {
+    darkMode: boolean;
+    onChangeTheme: (darkMode: boolean) => void;
+}) {
     const { isAuthenticated } = useAuth();
 
     return (
         <Shell>
-            <Navbar darkMode={darkMode} onToggleTheme={onToggleTheme} />
+            <Navbar darkMode={darkMode} onChangeTheme={onChangeTheme} />
 
             <Content>
                 <Routes>
@@ -70,19 +85,25 @@ function AppShell({ darkMode, onToggleTheme }: { darkMode: boolean; onToggleThem
 }
 
 export default function App() {
-    const [darkMode, setDarkMode] = useState(
-        () =>
-            typeof window !== 'undefined' &&
-            (window.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false),
-    );
+    const [darkMode, setDarkMode] = useState(resolveInitialDarkMode);
+
+    useEffect(() => {
+        applyThemePreference(darkMode);
+    }, [darkMode]);
+
+    useEffect(() => {
+        syncFaviconWithOs(isOsDarkMode());
+        return subscribeToOsColorScheme((osDark) => {
+            syncFaviconWithOs(osDark);
+            setDarkMode(osDark);
+        });
+    }, []);
+
     return (
         <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
             <GlobalStyle />
             <AuthProvider>
-                <AppShell
-                    darkMode={darkMode}
-                    onToggleTheme={() => setDarkMode((current) => !current)}
-                />
+                <AppShell darkMode={darkMode} onChangeTheme={setDarkMode} />
             </AuthProvider>
         </ThemeProvider>
     );

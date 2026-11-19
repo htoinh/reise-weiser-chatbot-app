@@ -1,15 +1,16 @@
 import styled from 'styled-components';
+import { pageContainerWidth } from '../styles/glass';
 
 const FooterBar = styled.footer`
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1rem 2rem;
-    background: ${({ theme }) => theme.colors.surface};
-    border-top: 1px solid ${({ theme }) => theme.colors.border};
+    margin: 0 auto clamp(0.65rem, 2vw, 1rem);
+    padding: clamp(0.75rem, 2vw, 0.95rem) clamp(1rem, 3vw, 1.5rem);
     color: ${({ theme }) => theme.colors.muted};
     font-size: 0.875rem;
     text-align: center;
+    ${pageContainerWidth}
 `;
 
 export default function Footer() {
@@ -17,7 +18,7 @@ export default function Footer() {
 
     return (
         <FooterBar>
-            <span>&copy; {year} ReiseWeiser &middot; Studiosus. All rights reserved.</span>
+            <span>&copy; {year} ReiseWeiser. Studiosus Reisen München GmbH</span>
         </FooterBar>
     );
 }

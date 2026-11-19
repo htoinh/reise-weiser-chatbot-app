@@ -1,15 +1,18 @@
 import styled from 'styled-components';
+import { InteractiveButton, liquidGlassInput, liquidGlassPanel } from '../styles/glass';
 
 export const AuthCard = styled.section`
+    width: 100%;
     max-width: 28rem;
-    margin: 0 auto;
-    padding: 2rem;
-    background: ${({ theme }) => theme.colors.surface};
-    border: 1px solid ${({ theme }) => theme.colors.border};
-    border-radius: 1rem;
+    margin: auto;
+    padding: clamp(1.35rem, 4vw, 2.25rem);
+    border-radius: clamp(1.15rem, 2.5vw, 1.5rem);
+    ${liquidGlassPanel}
 
     h1 {
         margin: 0 0 0.5rem;
+        font-size: clamp(1.45rem, 3vw, 1.8rem);
+        letter-spacing: -0.02em;
     }
 
     p {
@@ -35,32 +38,39 @@ export const Field = styled.div`
 `;
 
 export const Input = styled.input`
-    padding: 0.65rem 0.85rem;
-    border: 1px solid ${({ theme }) => theme.colors.border};
-    border-radius: 0.5rem;
-    background: ${({ theme }) => theme.colors.background};
-    color: ${({ theme }) => theme.colors.text};
+    width: 100%;
+    min-height: 2.8rem;
+    padding: 0.7rem 0.95rem;
+    border-radius: 0.85rem;
+    ${liquidGlassInput}
 `;
 
-export const SubmitButton = styled.button`
+export const SubmitButton = styled(InteractiveButton)`
     margin-top: 0.5rem;
-    padding: 0.75rem 1rem;
-    border: none;
-    border-radius: 0.5rem;
+    min-height: 2.9rem;
+    padding: 0.8rem 1.1rem;
+    border-radius: 0.85rem;
     font-weight: 600;
-    background: ${({ theme }) => theme.colors.primary};
-    color: ${({ theme }) => theme.colors.onPrimary};
+    background: ${({ theme }) => theme.glass.submitBackground};
+    backdrop-filter: blur(14px) saturate(165%);
+    -webkit-backdrop-filter: blur(14px) saturate(165%);
+    border: 1px solid ${({ theme }) => theme.glass.submitBorder};
+    color: ${({ theme }) => theme.glass.submitText};
+    box-shadow: ${({ theme }) => theme.glass.submitShadow};
 
-    &:disabled {
-        opacity: 0.65;
-        cursor: not-allowed;
+    &:hover:not(:disabled) {
+        background: ${({ theme }) => theme.glass.submitHoverBackground};
+        transform: translateY(-1px);
     }
 `;
 
 export const ErrorBanner = styled.div`
     padding: 0.75rem 1rem;
+    background: ${({ theme }) => theme.glass.errorBackground};
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border: 1px solid ${({ theme }) => theme.colors.error};
-    border-radius: 0.5rem;
+    border-radius: 0.85rem;
     color: ${({ theme }) => theme.colors.error};
     font-size: 0.95rem;
 `;

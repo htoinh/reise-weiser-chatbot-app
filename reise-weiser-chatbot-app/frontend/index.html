@@ -1,12 +1,42 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Reise Weiser Chatbot</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/app/main.tsx"></script>
-  </body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link id="app-favicon" rel="icon" type="image/svg+xml" href="/favicon-light.svg" />
+        <title>Reise Weiser Chatbot</title>
+    </head>
+    <body>
+        <script>
+            (() => {
+                const darkMq =
+                    window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)');
+                const icon = document.getElementById('app-favicon');
+                if (icon && darkMq && darkMq.matches) {
+                    icon.setAttribute('href', '/favicon-dark.svg');
+                }
+                let stored = null;
+                try {
+                    stored = window.localStorage.getItem('theme-preference');
+                } catch {
+                    // Ignore storage read errors.
+                }
+                const lightMq =
+                    window.matchMedia && window.matchMedia('(prefers-color-scheme: light)');
+                const isDark =
+                    stored === 'dark'
+                        ? true
+                        : stored === 'light'
+                          ? false
+                          : darkMq && darkMq.matches
+                            ? true
+                            : lightMq && lightMq.matches
+                              ? false
+                              : document.body.classList.contains('dark');
+                document.body.classList.toggle('dark', isDark);
+            })();
+        </script>
+        <div id="root"></div>
+        <script type="module" src="/src/app/main.tsx"></script>
+    </body>
 </html>

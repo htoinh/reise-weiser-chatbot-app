@@ -11,36 +11,46 @@ import { useAuth } from '../auth/authContext';
 import { ErrorBanner } from '../components/AuthFormStyles';
 import ChatInput from '../components/ChatInput';
 import Message from '../components/Message';
+import { animatedPrismBorder, liquidGlassPanel, WaveDots } from '../styles/glass';
 
 const ChatShell = styled.section`
+    flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    padding: 1.5rem;
-    background: ${({ theme }) => theme.colors.surface};
-    border: 1px solid ${({ theme }) => theme.colors.border};
-    border-radius: 1rem;
+    width: 100%;
+    gap: clamp(0.85rem, 2vw, 1.15rem);
+    padding: clamp(1rem, 3vw, 1.75rem);
+    border-radius: clamp(1.15rem, 2.5vw, 1.5rem);
+    ${liquidGlassPanel}
 `;
 
 const TitleBlock = styled.header`
     h1 {
         margin: 0 0 0.25rem;
-        font-size: 1.5rem;
+        font-size: clamp(1.25rem, 2.6vw, 1.55rem);
+        letter-spacing: -0.02em;
     }
 
     p {
         margin: 0;
+        font-size: clamp(0.92rem, 1.8vw, 1rem);
     }
 `;
 
 const MessageViewport = styled.div`
+    flex: 1;
     display: flex;
     flex-direction: column;
     gap: 0.85rem;
-    min-height: 22rem;
-    max-height: calc(100dvh - 20rem);
+    min-height: clamp(14rem, 42dvh, 22rem);
+    max-height: calc(100dvh - 18.5rem);
     overflow-y: auto;
-    padding: 0.5rem 0.25rem;
+    overscroll-behavior: contain;
+    padding: 0.4rem 0.25rem;
+
+    @media (max-width: 44rem) {
+        max-height: calc(100dvh - 22rem);
+    }
 `;
 
 const StatusNotice = styled.p`
@@ -49,11 +59,31 @@ const StatusNotice = styled.p`
     color: ${({ theme }) => theme.colors.muted};
 `;
 
-const PendingText = styled.p`
-    margin: 0;
-    font-size: 0.9rem;
-    font-style: italic;
-    color: ${({ theme }) => theme.colors.muted};
+const ThinkingBubble = styled.div`
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    max-width: min(82%, 24rem);
+    padding: 0.7rem 1.05rem;
+    border-radius: 1.2rem 1.2rem 1.2rem 0.3rem;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    background: ${({ theme }) => theme.glass.primaryGradient};
+    color: ${({ theme }) => theme.colors.onPrimary};
+    box-shadow: ${({ theme }) => theme.glass.primaryShadow};
+    font-size: 0.92rem;
+    font-weight: 500;
+    ${animatedPrismBorder}
+
+    &::after {
+        opacity: 1;
+        animation: rwBorderLoop 1.5s linear infinite;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        &::after {
+            animation: none;
+        }
+    }
 `;
 
 function nextClientId(prefix: string): string {
@@ -178,7 +208,12 @@ export default function Chat() {
                         />
                     ))
                 )}
-                {isSending && <PendingText>ReiseWeiser is thinking...</PendingText>}
+                {isSending && (
+                    <ThinkingBubble role="status" data-testid="thinking-indicator">
+                        <span>ReiseWeiser is thinking</span>
+                        <WaveDots />
+                    </ThinkingBubble>
+                )}
                 <div ref={messagesEndRef} />
             </MessageViewport>
 
